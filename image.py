@@ -1,5 +1,6 @@
 import PIL.Image
 import numpy as np
+import os
 
 NEAREST = PIL.Image.NEAREST
 BILINEAR = PIL.Image.BILINEAR
@@ -13,9 +14,11 @@ def imsave(img, filename, format=None):
     if format == 'jpg':
         format = 'jpeg'
     if img.dtype != 'B':
-        img = ptpscale(img).astype('B')
+        img = np.minimum(np.maximum(img, 0), 255).astype('B')
     PIL.Image.fromarray(img).save(filename, format.lower())
 
+def imsavesc(img, filename, format=None):
+    imsave(ptpscale(img), filename, format)
 
 def imread(filename):
     return np.array(PIL.Image.open(filename))
@@ -32,7 +35,29 @@ def ptpscale(img):
     a, b = min(img.flat), max(img.flat)
     if a == b:
         return np.zeros_like(img)
-    return (img - a) / (b - a) * 255
+    return (img - a) * 255 / (b - a)
+
+
+class ImageDirOut(object):
+    def __init__(self, dirname, format='jpg', append=False):
+        self.dirname = dirname
+        self.format = format
+        self.fcnt = 0
+        if not os.path.exists(dirname):
+            os.mkdir(dirname)
+        if append:
+            self.fcnt = len(os.listdir(dirname))
+        else:
+            for fn in os.listdir(dirname):
+                os.unlink(os.path.join(dirname, fn))
+
+    def view(self, img):
+        imsave(img, os.path.join(self.dirname, '%.8d.%s' % (self.fcnt, self.format)), self.format)
+        self.fcnt += 1
+
+    def viewsc(self, img):
+        self.view(ptpscale(img))
+
 
 
 

@@ -27,25 +27,3 @@ def view(img, name="Video"):
 
 view.paused = False
 
-class ImageDirOut(object):
-    def __init__(self, dirname, format='jpg'):
-        self.dirname = dirname
-        self.format = format
-        self.fcnt = 0
-        if not os.path.exists(dirname):
-            os.mkdir(dirname)
-        for fn in os.listdir(dirname):
-            os.unlink(os.path.join(dirname, fn))
-
-    def view(self, img):
-        if img.dtype != 'B':
-            img = np.minimum(np.maximum(img, 0), 255).astype('B')
-        img.save(os.path.join(self.dirname, '%.8d.%s' % (self.fcnt, self.format)), self.format)
-        self.fcnt += 1
-
-    def viewsc(self, img):
-        a, b = min(img.flat), max(img.flat)
-        if a == b:
-            b += 1
-        img = ((img.astype('d') - a) * 255 / (b - a)).astype('B')
-        self.view(img)
