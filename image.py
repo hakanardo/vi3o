@@ -12,6 +12,8 @@ def imsave(img, filename, format=None):
         format = filename.split('.')[-1]
     if format == 'jpg':
         format = 'jpeg'
+    if img.dtype != 'B':
+        img = ptpscale(img).astype('B')
     PIL.Image.fromarray(img).save(filename, format.lower())
 
 
@@ -24,5 +26,13 @@ def imscale(img, shape, interpolation=NEAREST):
         shape = (shape * img.shape[1], shape * img.shape[0])
     shape = map(int, shape)
     return np.array(PIL.Image.fromarray(img).resize(shape, interpolation))
+
+
+def ptpscale(img):
+    a, b = min(img.flat), max(img.flat)
+    if a == b:
+        return np.zeros_like(img)
+    return (img - a) / (b - a) * 255
+
 
 
