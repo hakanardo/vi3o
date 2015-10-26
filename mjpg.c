@@ -7,7 +7,8 @@
 
 #include "mjpg.h"
 
-#define d_printf(...) fprintf(stderr, __VA_ARGS__)
+//#define d_printf(...) fprintf(stderr, __VA_ARGS__)
+#define d_printf(...)
 
 #ifndef N_RETRIES
 #  define N_RETRIES 3
@@ -93,7 +94,7 @@ my_error_exit (j_common_ptr cinfo)
 
   /* Always display the message. */
   /* We could postpone this until after returning, if we chose. */
-  (*cinfo->err->output_message) (cinfo);
+    //  (*cinfo->err->output_message) (cinfo);
 
   /* Return control to the setjmp point */
   longjmp(myerr->setjmp_buffer, 1);
@@ -162,15 +163,12 @@ int mjpg_next(struct mjpg *m) {
       m->cameraDecomp.src->next_input_byte++;
       m->cameraDecomp.src->bytes_in_buffer--;
     } else if (m->cameraJerr.pub.msg_code != JERR_INPUT_EMPTY) {
-      fprintf(stderr, "need more data\n");
+      d_printf("need more data\n");
       m->cameraDecomp.src->fill_input_buffer(&m->cameraDecomp);
     }
   }
 
-  //skip_past_str(&m->cameraDecomp,"\r\n--");
-  //skip_past_str(&m->cameraDecomp,"\r\n\r\n");
   skip_past_str(&m->cameraDecomp, marker);
-  //fprintf(stderr,"P: %d\n", ftell(m->fd)-m->cameraDecomp.src->bytes_in_buffer);
   m->start_position_in_file = ftell(m->fd)-m->cameraDecomp.src->bytes_in_buffer;
   
   jpeg_read_header(&m->cameraDecomp, TRUE);
