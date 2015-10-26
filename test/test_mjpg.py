@@ -1,3 +1,4 @@
+from py.test import raises
 from vi3o.mjpg import Mjpg
 import os
 
@@ -10,3 +11,8 @@ def test_iter():
         assert img.index == i
         timestamps.append(img.timestamp)
     assert timestamps[0] == 1445859308.97
+
+def test_no_file():
+    with raises(IOError):
+        Mjpg(test_mjpg + 'not_there')
+
