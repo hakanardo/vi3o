@@ -10,6 +10,16 @@ class Frame(np.ndarray):
 
 class Mjpg(object):
     def __init__(self, filename, grey=False):
+        self.filename = filename
+        self.grey = grey
+        open(filename).close()
+
+    def __iter__(self):
+        return MjpgIter(self.filename, self.grey)
+
+
+class MjpgIter(object):
+    def __init__(self, filename, grey=False):
         self.m = ffi.new("struct mjpg *")
         self.fcnt = 0
         if grey:
@@ -22,7 +32,7 @@ class Mjpg(object):
             raise IOError("Failed to open: " + filename)
 
     def __iter__(self):
-        return self
+        self
 
     def next(self):
         r = lib.mjpg_next(self.m)
