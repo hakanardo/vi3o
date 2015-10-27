@@ -150,7 +150,6 @@ def viewsc(img, name='Default'):
 if __name__ == '__main__':
     viewer = DebugViewer()
 
-    for img in Mjpg('/home/hakan/workspace/apps/hakan/pricertag/ladder4-wide.mjpg', grey=True):
-        img[:50, :50] = 255
+    for img in Mjpg('/home/hakan/cognimatics/workspace/apps/hakan/pricertag/single.mjpg', grey=True):
         viewer.view(img)
 
