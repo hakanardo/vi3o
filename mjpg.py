@@ -43,6 +43,7 @@ class MjpgIter(object):
         else:
             shape = (self.m.height, self.m.width, self.channels)
         img = Frame(shape, 'B')
+        assert img.__array_interface__['strides'] is None
         self.m.pixels = ffi.cast('unsigned char *', img.__array_interface__['data'][0])
 
         r = lib.mjpg_next_data(self.m)
