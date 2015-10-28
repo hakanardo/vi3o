@@ -132,14 +132,13 @@ int mjpg_open_fd(struct mjpg *m, FILE *fd, int type, int dataOrder) {
 
   m->width=-1;
   m->nErr=0;
+  m->pixels = NULL;
 
-  return mjpg_next(m);
+  return OK;
 }
 
 /// Reads the next frame into m.img
-int mjpg_next(struct mjpg *m) {
-  int row_stride;               /* physical row width in output buffer */
-  int x,y;
+int mjpg_next_head(struct mjpg *m) {
   int ch;
   int i;
   char marker[] = { 0xFF, 0 };
@@ -194,13 +193,6 @@ int mjpg_next(struct mjpg *m) {
   if (m->width==-1) {
     m->width = m->cameraDecomp.output_width;
     m->height = m->cameraDecomp.output_height;
-    m->pixels = malloc(m->width * m->height * ch);
-
-
-  if (!m->pixels) {
-      d_printf("MJPG: unable to create image\n");
-      return ERROR_FAIL;
-    }
 
     if (m->dataOrder==IMORDER_INTERLEAVED) {
       m->cameraBuffer[0] = (*m->cameraDecomp.mem->alloc_sarray)(
@@ -219,16 +211,6 @@ int mjpg_next(struct mjpg *m) {
       d_printf("MJPG: Unknown dataOrder %d\n",m->dataOrder);
       return ERROR_ILLEGALARGUMENT;
     }
-  } 
-    
-  if (m->width != (int)m->cameraDecomp.output_width ||
-      m->height != (int)m->cameraDecomp.output_height ||
-      m->cameraDecomp.output_components != ch) {
-    d_printf("Server returned wrong sized jpg: %dx%dx%d ",
-             m->cameraDecomp.output_width,m->cameraDecomp.output_height,
-             m->cameraDecomp.output_components);
-    d_printf("expected was: %dx%dx%d\n", m->width, m->height, ch);
-    return ERROR_FILEFORMAT;
   }
 
   m->timestamp_sec = m->timestamp_usec = 0;
@@ -246,7 +228,29 @@ int mjpg_next(struct mjpg *m) {
     }
     */
   }
-  
+  return OK;
+ }
+
+int mjpg_next_data(struct mjpg *m) {
+  int x, y, i, ch;
+  int row_stride;               /* physical row width in output buffer */
+
+  if (m->type==IMTYPE_GRAY) {
+    ch=1;
+  } else {
+    ch=3;
+  }
+
+  if (m->width != (int)m->cameraDecomp.output_width ||
+      m->height != (int)m->cameraDecomp.output_height ||
+      m->cameraDecomp.output_components != ch) {
+    d_printf("Server returned wrong sized jpg: %dx%dx%d ",
+             m->cameraDecomp.output_width,m->cameraDecomp.output_height,
+             m->cameraDecomp.output_components);
+    d_printf("expected was: %dx%dx%d\n", m->width, m->height, ch);
+    return ERROR_FILEFORMAT;
+  }
+
   if (m->dataOrder==IMORDER_INTERLEAVED) {
     row_stride = m->cameraDecomp.output_width *
       m->cameraDecomp.output_components;
@@ -273,7 +277,7 @@ int mjpg_next(struct mjpg *m) {
       return ERROR_ILLEGALARGUMENT;
     }
   } else if (m->dataOrder==IMORDER_PLANAR) {
-    char *y,*cb,*cr;
+    unsigned char *y,*cb,*cr;
     y=m->pixels;
     cb=y+m->width*ch*m->height;
     cr=cb+m->width*ch*m->height;
@@ -371,7 +375,8 @@ int mjpg_seek (struct mjpg *m, long offset, int whence) {
   if(!fseek(m->fd, offset, whence)) { //SEEK_SET || SEEK_CUR
     m->cameraDecomp.src->bytes_in_buffer=0;
     //m->cameraDecomp.src->fill_input_buffer(&m->cameraDecomp);
-    return mjpg_next(m);
+//    return mjpg_next(m);
+  return OK;
   } else {
     return(-1);
   }
@@ -385,7 +390,6 @@ int mjpg_close(struct mjpg *m) {
 }
 int mjpg_close_fd(struct mjpg *m) {
   jpeg_destroy_decompress(&m->cameraDecomp);
-  free(m->pixels);
   return OK;
 }
 /*@}*/

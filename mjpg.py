@@ -35,16 +35,21 @@ class MjpgIter(object):
         self
 
     def next(self):
-        r = lib.mjpg_next(self.m)
+        r = lib.mjpg_next_head(self.m)
         if r != lib.OK:
             raise StopIteration
-
-        img = np.frombuffer(ffi.buffer(self.m.pixels, self.m.width * self.m.height * self.channels), 'B')
         if self.channels == 1:
             shape = (self.m.height, self.m.width)
         else:
             shape = (self.m.height, self.m.width, self.channels)
-        img = img.reshape(shape).view(type=Frame)
+        img = Frame(shape, 'B')
+        self.m.pixels = ffi.cast('unsigned char *', img.__array_interface__['data'][0])
+
+        r = lib.mjpg_next_data(self.m)
+        if r != lib.OK:
+            raise StopIteration
+
+        # img = img.reshape(shape).view(type=Frame)
         img.timestamp = self.m.timestamp_sec + self.m.timestamp_usec / 1000000.0
         img.index = self.fcnt
         self.fcnt += 1

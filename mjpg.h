@@ -30,7 +30,7 @@ struct mjpg {
   
   char mjpg_separator[MAX_SEPARATOR_LEN];
   int width, height, dataOrder;
-  char *pixels;
+  unsigned char *pixels;
 
   int nErr;
 
@@ -40,7 +40,8 @@ struct mjpg {
 };
 
 int mjpg_open(struct mjpg *m, char *name, int type, int dataOrder);
-int mjpg_next(struct mjpg *m);
+int mjpg_next_head(struct mjpg *m);
+int mjpg_next_data(struct mjpg *m);
 int mjpg_close(struct mjpg *m);
 
 int mjpg_seek (struct mjpg *m, long offset, int whence);
