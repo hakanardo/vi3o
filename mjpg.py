@@ -44,6 +44,9 @@ class Mjpg(object):
         self.myiter.fcnt = item
         return self.myiter.next()
 
+    def __len__(self):
+        return len(self.offset)
+
 
 class MjpgIter(object):
     def __init__(self, filename, grey=False):

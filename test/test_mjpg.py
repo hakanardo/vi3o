@@ -24,6 +24,10 @@ def test_iter():
     video2 = Mjpg(test_mjpg)
     assert video[3][20,30,1] == 86
 
+    assert len(video)== 16
+    with raises(IndexError):
+        video[100]
+
 
 def test_no_file():
     with raises(IOError):
