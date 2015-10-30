@@ -7,6 +7,7 @@ ffi.cdef("""
             unsigned char *pixels;
             unsigned int timestamp_sec;
             unsigned int timestamp_usec;
+            long start_position_in_file, stop_position_in_file;
             ...;
         };
         enum {OK, ERROR_FILENOTFOUND, ERROR_ILLEGALARGUMENT, ERROR_FILEFORMAT,
@@ -19,6 +20,7 @@ ffi.cdef("""
         int mjpg_next_head(struct mjpg *m);
         int mjpg_next_data(struct mjpg *m);
         int mjpg_close(struct mjpg *m);
+        int mjpg_seek (struct mjpg *m, long offset);
          """)
 ffi.set_source("_mjpg", '#include "mjpg.h"', sources=["mjpg.c"], libraries=["jpeg"])
 ffi.compile()

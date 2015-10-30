@@ -371,14 +371,13 @@ int mjpg_next_data(struct mjpg *m) {
   return OK;
 }
 
-int mjpg_seek (struct mjpg *m, long offset, int whence) {
-  if(!fseek(m->fd, offset, whence)) { //SEEK_SET || SEEK_CUR
+int mjpg_seek (struct mjpg *m, long offset) {
+  if(!fseek(m->fd, offset, SEEK_SET)) {
     m->cameraDecomp.src->bytes_in_buffer=0;
     //m->cameraDecomp.src->fill_input_buffer(&m->cameraDecomp);
-//    return mjpg_next(m);
-  return OK;
+    return OK;
   } else {
-    return(-1);
+    return ERROR_FAIL;
   }
 }
 

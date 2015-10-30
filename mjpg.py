@@ -1,3 +1,6 @@
+import json
+import os
+
 try:
     from _mjpg import ffi, lib
 except ImportError:
@@ -13,9 +16,33 @@ class Mjpg(object):
         self.filename = filename
         self.grey = grey
         open(filename).close()
+        self._myiter = None
+        self._index = None
 
     def __iter__(self):
         return MjpgIter(self.filename, self.grey)
+
+    @property
+    def myiter(self):
+        if self._myiter is None:
+            self._myiter = iter(self)
+        return self._myiter
+
+    @property
+    def offset(self):
+        if self._index is None:
+            if os.path.exists(self.filename + '.idx'):
+                self._index = json.load(open(self.filename + '.idx'))
+            else:
+                self._index = [self.myiter.m.start_position_in_file for img in self.myiter]
+                with open(self.filename + '.idx', 'w') as fd:
+                    json.dump(self._index, fd)
+        return self._index
+
+    def __getitem__(self, item):
+        lib.mjpg_seek(self.myiter.m, self.offset[item])
+        self.myiter.fcnt = item
+        return self.myiter.next()
 
 
 class MjpgIter(object):
@@ -32,7 +59,7 @@ class MjpgIter(object):
             raise IOError("Failed to open: " + filename)
 
     def __iter__(self):
-        self
+        return self
 
     def next(self):
         r = lib.mjpg_next_head(self.m)

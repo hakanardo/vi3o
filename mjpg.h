@@ -44,7 +44,7 @@ int mjpg_next_head(struct mjpg *m);
 int mjpg_next_data(struct mjpg *m);
 int mjpg_close(struct mjpg *m);
 
-int mjpg_seek (struct mjpg *m, long offset, int whence);
+int mjpg_seek (struct mjpg *m, long offset);
 
 int mjpg_open_fd(struct mjpg *m, FILE *fd, int type, int dataOrder);
 int mjpg_close_fd(struct mjpg *m);
