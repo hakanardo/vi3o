@@ -40,9 +40,11 @@ class DebugViewer(object):
         for window in pyglet.app.windows:
             window.dispatch_event(*e)
 
+    def _inc_fcnt(self):
+        self.fcnt += 1
 
     def view(self, img, scale=False, intensity=None):
-        self.fcnt += 1
+        self._inc_fcnt()
         self.window.set_caption(self.name + ' - %d' % self.fcnt)
         resize = self.image is None
         if intensity is None:
