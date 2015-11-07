@@ -9,7 +9,8 @@ def test_iter():
     timestamps = []
     pixels = []
     video = Mjpg(test_mjpg)
-    os.unlink(test_mjpg + '.idx')
+    if os.path.exists(test_mjpg + '.idx'):
+        os.unlink(test_mjpg + '.idx')
     for i, img in enumerate(video):
         assert img.index == i
         timestamps.append(img.timestamp)
