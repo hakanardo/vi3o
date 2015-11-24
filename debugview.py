@@ -133,10 +133,20 @@ class DebugViewer(object):
         self.scroll[0] += (DebugViewer.mouse_x - prex) * self.scale
         self.scroll[1] -= (DebugViewer.mouse_y - prey) * self.scale
         self.on_mouse_motion(x, y)
+        self.clicking = False
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         DebugViewer.scroll[0] += dx
         DebugViewer.scroll[1] += dy
+        self.clicking = False
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        self.clicking = True
+
+    def on_mouse_release(self, x, y, button, modifiers):
+        if self.clicking:
+            print DebugViewer.mouse_x, DebugViewer.mouse_y
+
 
 def view(img, name='Default', scale=False):
     if name not in DebugViewer.named_viewers:
