@@ -35,7 +35,7 @@ def ptpscale(img):
     a, b = min(img.flat), max(img.flat)
     if a == b:
         return np.zeros_like(img)
-    return (img - a) * 255 / (b - a)
+    return (img - a) * (255 / (b - a))
 
 
 class ImageDirOut(object):

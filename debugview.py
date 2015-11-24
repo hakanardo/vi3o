@@ -2,7 +2,6 @@ import pyglet
 from pyglet.window import key as keysym
 from pyglet.gl import glTexParameteri, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_NEAREST
 from vi3o.image import ptpscale
-from vi3o.mjpg import Mjpg
 import numpy as np
 
 class DebugViewer(object):
@@ -64,7 +63,7 @@ class DebugViewer(object):
 
         glTexParameteri(self.image.texture.target,
             GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        glTexParameteri(self.image.texture.target, 
+        glTexParameteri(self.image.texture.target,
             GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         if resize:
             self.on_resize(self.window.width, self.window.height)
@@ -83,7 +82,7 @@ class DebugViewer(object):
         self.window.clear()
         if self.image:
             self.image.blit(self.offset[0] + self.scroll[0], self.offset[1] + self.scroll[1], 0,
-                            self.scaled_size[0], self.scaled_size[1]) 
+                            self.scaled_size[0], self.scaled_size[1])
             x, y = DebugViewer.mouse_x, DebugViewer.mouse_y
             if 0 <= x < self.intensity.shape[1] and 0 <= y < self.intensity.shape[0]:
                 self.label.text = 'x: %4d   y: %4d   I: %s' % (x, y, self.intensity[y, x])
@@ -113,7 +112,7 @@ class DebugViewer(object):
 
     def on_mouse_motion(self, x, y, dx=None, dy=None):
         x = int((x - self.offset[0] - self.scroll[0]) / self.scale)
-        y = self.image.height - int((y - self.offset[1] - self.scroll[1]) / self.scale) - 1 
+        y = self.image.height - int((y - self.offset[1] - self.scroll[1]) / self.scale) - 1
         DebugViewer.mouse_x, DebugViewer.mouse_y = x, y
 
     def on_resize(self, winw, winh):
@@ -148,8 +147,9 @@ def viewsc(img, name='Default'):
     view(img, name, True)
 
 if __name__ == '__main__':
+    from vi3o.mkv import Mkv
     viewer = DebugViewer()
 
-    for img in Mjpg('/home/hakan/cognimatics/workspace/apps/hakan/pricertag/single.mjpg', grey=True):
+    for img in Mkv('/home/hakan/workspace/apps/hakan/pricertag/at_pricer/cam4.mkv', grey=True):
         viewer.view(img)
 

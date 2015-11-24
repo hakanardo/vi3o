@@ -66,7 +66,6 @@ class MkvIter(object):
 
     def next(self):
         assert self.m.width > 0
-        assert self.channels == 3
         if self.channels == 1:
             shape = (self.m.height, self.m.width)
         else:
@@ -76,7 +75,7 @@ class MkvIter(object):
         assert img.__array_interface__['strides'] is None
         pixels = ffi.cast('uint8_t *', img.__array_interface__['data'][0])
 
-        while not lib.decode_frame(self.p, self.frm, pixels, self.pts):
+        while not lib.decode_frame(self.p, self.frm, pixels, self.pts, self.channels == 1):
             if not lib.mkv_next(self.m, self.frm):
                 raise StopIteration
         lib.mkv_next(self.m, self.frm)
@@ -91,7 +90,7 @@ class MkvIter(object):
         # img.timestamp = self.m.timestamp_sec + self.m.timestamp_usec / 1000000.0
 
         img.index = self.fcnt
-        img.timestamp = float(self.pts[0]) / 1000.0
+        img.timestamp = float(self.pts[0]) / 1000000.0
         self.fcnt += 1
         return img
 

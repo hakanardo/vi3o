@@ -42,7 +42,7 @@ struct decode *decode_open(struct mkv *m) {
     return p;
 }
 
-int decode_frame(struct decode *p, struct mkv_frame *frm, uint8_t *img, uint64_t *ts) {
+int decode_frame(struct decode *p, struct mkv_frame *frm, uint8_t *img, uint64_t *ts, int grey) {
     AVPacket pkt;
     av_init_packet(&pkt);
     pkt.data = frm->data;
@@ -54,15 +54,22 @@ int decode_frame(struct decode *p, struct mkv_frame *frm, uint8_t *img, uint64_t
     assert(len>=0);
 
     if (got_picture) {
+
+        int pixfmt = AV_PIX_FMT_RGB24;
+        int strides[] = {p->m->width * 3};
+        if (grey) {
+            pixfmt = AV_PIX_FMT_GRAY8;
+            strides[0] = p->m->width;
+        }
+
         struct SwsContext *img_convert_ctx;
         img_convert_ctx = sws_getCachedContext(NULL,
                                                p->m->width, p->m->height,
                                                p->codec_context->pix_fmt,
                                                p->m->width, p->m->height,
-                                               AV_PIX_FMT_RGB24,
+                                               pixfmt,
                                                SWS_BICUBIC, NULL, NULL,NULL);
         uint8_t *const planes[] = {img};
-        const int strides[] = {p->m->width * 3};
         sws_scale(img_convert_ctx,
               (const uint8_t * const*) ((AVPicture*)p->picture)->data,
               ((AVPicture*)p->picture)->linesize,
