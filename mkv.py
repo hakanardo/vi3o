@@ -43,12 +43,17 @@ class Mkv(object):
     def __len__(self):
         return len(self.offset)
 
+class DecodeError(Exception):
+    pass
 
 class MkvIter(object):
     def __init__(self, filename, grey=False):
         self.m = lib.mkv_open(filename)
         self.frm = ffi.new('struct mkv_frame *')
-        lib.mkv_next(self.m, self.frm)
+        self.out_of_packages = False
+        self.largest_seen_timestamp = -1
+        self.last_returned_timestamp = -1
+        self.next_package()
         assert self.m.codec_private
         assert self.m.codec_private_len > 0
         self.p = lib.decode_open(self.m)
@@ -64,6 +69,13 @@ class MkvIter(object):
     def __iter__(self):
         return self
 
+    def next_package(self):
+        if lib.mkv_next(self.m, self.frm):
+            self.largest_seen_timestamp = max(self.largest_seen_timestamp, self.frm.pts)
+        else:
+            self.out_of_packages = True
+
+
     def next(self):
         assert self.m.width > 0
         if self.channels == 1:
@@ -75,22 +87,19 @@ class MkvIter(object):
         assert img.__array_interface__['strides'] is None
         pixels = ffi.cast('uint8_t *', img.__array_interface__['data'][0])
 
-        while not lib.decode_frame(self.p, self.frm, pixels, self.pts, self.channels == 1):
-            if not lib.mkv_next(self.m, self.frm):
-                raise StopIteration
-        lib.mkv_next(self.m, self.frm)
-        # FIXME: After mkv_next returns 0, call decode_frame untill it returns 1 to get the last frames
-
-        #
-        # r = lib.mjpg_next_data(self.m)
-        # if r != lib.OK:
-        #     raise StopIteration
-        #
-        # # img = img.reshape(shape).view(type=Frame)
-        # img.timestamp = self.m.timestamp_sec + self.m.timestamp_usec / 1000000.0
+        while not self.out_of_packages or self.last_returned_timestamp < self.largest_seen_timestamp:
+            r = lib.decode_frame(self.p, self.frm, pixels, self.pts, self.channels == 1)
+            self.next_package()
+            if r == 1:
+                break
+            elif r == -1:
+                raise DecodeError
+        else:
+            raise StopIteration
 
         img.index = self.fcnt
         img.timestamp = float(self.pts[0]) / 1000000.0
+        self.last_returned_timestamp = self.pts[0]
         self.fcnt += 1
         return img
 

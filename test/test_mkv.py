@@ -17,7 +17,7 @@ def test_iter():
         pixels.append(img[20,30,1])
     assert len(timestamps) == 16
     assert timestamps[0] == 0.0 # FIXME: Use systeime
-    assert timestamps[1] == 40.0
+    assert timestamps[1] == 0.04
     assert pixels[:6] == [84, 85, 85, 84, 84, 86]
 
     assert video[1].timestamp == 1445859308.97

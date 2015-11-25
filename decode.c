@@ -51,7 +51,7 @@ int decode_frame(struct decode *p, struct mkv_frame *frm, uint8_t *img, uint64_t
     int got_picture = 0;
     int len = avcodec_decode_video2(p->codec_context, p->picture,
                                     &got_picture, &pkt);
-    assert(len>=0);
+    if (len < 0) return -1;
 
     if (got_picture) {
 
