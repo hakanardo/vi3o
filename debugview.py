@@ -41,6 +41,8 @@ class DebugViewer(object):
 
 
     def view(self, img, scale=False, intensity=None):
+        if img.dtype == 'bool':
+            img = img.astype('B')
         self.fcnt += 1
         self.window.set_caption(self.name + ' - %d' % self.fcnt)
         resize = self.image is None
