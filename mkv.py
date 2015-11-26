@@ -25,23 +25,38 @@ class Mkv(object):
         return self._myiter
 
     @property
-    def offset(self):
+    def frame(self):
         if self._index is None:
             if os.path.exists(self.filename + '.idx'):
                 self._index = json.load(open(self.filename + '.idx'))
             else:
-                self._index = [self.myiter.m.start_position_in_file for img in self.myiter]
+                self._index = []
+                m = lib.mkv_open(self.filename)
+                frm = ffi.new('struct mkv_frame *')
+                while lib.mkv_next(m, frm):
+                    self._index.append([frm.pts, frm.offset, frm.key_frame])
+                self._index.sort()
                 with open(self.filename + '.idx', 'w') as fd:
                     json.dump(self._index, fd)
         return self._index
 
     def __getitem__(self, item):
-        lib.mjpg_seek(self.myiter.m, self.offset[item])
-        self.myiter.fcnt = item
-        return self.myiter.next()
+        keyindex = item
+        while self.frame[keyindex][2] == 0:
+            keyindex -= 1
+            assert keyindex >= 0
+        pts = self.frame[item][0]
+        if keyindex > self.myiter.fcnt or item < self.myiter.fcnt:
+            lib.mkv_seek(self.myiter.m, self.frame[keyindex][1])
+        for img in self.myiter:
+            if img.pts == pts:
+                self.myiter.fcnt = item + 1
+                img.index = item
+                return img
+        assert False
 
     def __len__(self):
-        return len(self.offset)
+        return len(self.frame)
 
 class DecodeError(Exception):
     pass
@@ -98,7 +113,8 @@ class MkvIter(object):
             raise StopIteration
 
         img.index = self.fcnt
-        img.timestamp = float(self.pts[0]) / 1000000.0
+        img.pts = self.pts[0]
+        img.timestamp = float(img.pts) / 1000000.0
         self.last_returned_timestamp = self.pts[0]
         self.fcnt += 1
         return img

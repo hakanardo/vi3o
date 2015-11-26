@@ -20,16 +20,26 @@ def test_iter():
     assert timestamps[1] == 0.04
     assert pixels[:6] == [84, 85, 85, 84, 84, 86]
 
-    assert video[1].timestamp == 1445859308.97
+    pixels = [video[i][20,30,1] for i in xrange(6)]
+    assert pixels == [84, 85, 85, 84, 84, 86]
+
+    assert video[2].timestamp == 0.08
+    assert video[1].timestamp == 0.04
     assert video[2].index == 2
     assert video[0][20,30,1] == 84
 
     video2 = Mkv(test_mkv)
-    assert video[3][20,30,1] == 86
+    assert video[3][20,30,1] == 84
 
     assert len(video)== 16
     with raises(IndexError):
         video[100]
+
+def test_idx():
+    if os.path.exists(test_mkv + '.idx'):
+        os.unlink(test_mkv + '.idx')
+    test_iter()
+    test_iter()
 
 
 def test_no_file():

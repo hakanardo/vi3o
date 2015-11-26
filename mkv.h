@@ -29,6 +29,7 @@ struct mkv {
 struct mkv *mkv_open(char *filename);
 void mkv_close(struct mkv *s);
 int mkv_next(struct mkv *s, struct mkv_frame *frm);
+void mkv_seek(struct mkv *s, unsigned long offset);
 void mkv_estimate_systime_offset(struct mkv *s);
 
 #endif

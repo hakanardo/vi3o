@@ -30,6 +30,11 @@ def test_iter():
     with raises(IndexError):
         video[100]
 
+def test_idx():
+    if os.path.exists(test_mjpg + '.idx'):
+        os.unlink(test_mjpg + '.idx')
+    test_iter()
+    test_iter()
 
 def test_no_file():
     with raises(IOError):
