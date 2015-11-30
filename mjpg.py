@@ -1,6 +1,8 @@
 import json
 import os
 
+from vi3o.utils import SlicedView
+
 try:
     from _mjpg import ffi, lib
 except ImportError:
@@ -40,6 +42,8 @@ class Mjpg(object):
         return self._index
 
     def __getitem__(self, item):
+        if isinstance(item, slice):
+            return SlicedView(self, item)
         lib.mjpg_seek(self.myiter.m, self.offset[item])
         self.myiter.fcnt = item
         return self.myiter.next()

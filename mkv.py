@@ -4,6 +4,9 @@ import os
 from _mkv import ffi, lib
 import numpy as np
 
+from vi3o.utils import SlicedView
+
+
 class Frame(np.ndarray):
     pass
 
@@ -41,6 +44,8 @@ class Mkv(object):
         return self._index
 
     def __getitem__(self, item):
+        if isinstance(item, slice):
+            return SlicedView(self, item)
         keyindex = item
         while self.frame[keyindex][2] == 0:
             keyindex -= 1

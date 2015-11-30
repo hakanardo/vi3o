@@ -40,3 +40,11 @@ def test_no_file():
     with raises(IOError):
         Mjpg(test_mjpg + 'not_there')
 
+def test_slice():
+    video = Mjpg(test_mjpg)
+    sub = video[2:5]
+    assert [img[20,30,1] for img in sub] == [84, 86, 86]
+    assert sub[1].timestamp == video[3].timestamp
+    assert len(sub) == 3
+
+

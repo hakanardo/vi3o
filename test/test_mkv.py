@@ -41,8 +41,13 @@ def test_idx():
     test_iter()
     test_iter()
 
-
 def test_no_file():
     with raises(IOError):
         Mkv(test_mkv + 'not_there')
 
+def test_slice():
+    video = Mkv(test_mkv)
+    sub = video[2:5]
+    assert [img[20,30,1] for img in sub] == [85, 84, 84]
+    assert sub[1].timestamp == video[3].timestamp
+    assert len(sub) == 3
