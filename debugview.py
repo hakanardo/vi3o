@@ -4,6 +4,9 @@ from pyglet.gl import glTexParameteri, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FIL
 from vi3o.image import ptpscale
 import numpy as np
 
+from vi3o.mjpg import Mjpg
+
+
 class DebugViewer(object):
     paused = False
     step_counter = 0
@@ -28,6 +31,7 @@ class DebugViewer(object):
                           x=10, y=0,
                           anchor_x='left', anchor_y='bottom')
         self.label.set_style('background_color', (0,0,0,255))
+        self.autoflipp = True
 
     def dispatch_events(self):
         for window in pyglet.app.windows:
@@ -45,17 +49,48 @@ class DebugViewer(object):
     def view(self, img, scale=False, intensity=None):
         if img.dtype == 'bool':
             img = img.astype('B')
-        self._inc_fcnt()
-        self.window.set_caption(self.name + ' - %d' % self.fcnt)
-        resize = self.image is None
         if intensity is None:
             intensity = img
-
         if scale:
             img = ptpscale(img)
-
         if img.dtype != 'B':
             img = np.minimum(np.maximum(img, 0), 255).astype('B')
+
+        if self.autoflipp:
+            self.image_array = [(img, intensity)]
+            self._view_image_array()
+        else:
+            self.image_array.append((img, intensity))
+
+    def flipp(self):
+        if not self.autoflipp:
+            self._view_image_array()
+        else:
+            self.image = None
+        self.autoflipp = False
+        self.image_array = []
+
+
+    def _stack(self, image_array):
+        if max(len(img.shape) for img in image_array) == 3:
+            images = [img if len(img.shape) == 3 else np.stack([img, img, img], 2)
+                      for img in image_array]
+        else:
+            images = image_array
+        return np.hstack(images)
+
+    def _view_image_array(self):
+
+        self._inc_fcnt()
+        self.window.set_caption(self.name + ' - %d' % self.fcnt)
+
+        resize = self.image is None
+
+        img = self._stack([img for img, _ in self.image_array])
+        intensity = self._stack([ii for _, ii in self.image_array])
+        self.color_mask = np.hstack([len(ii.shape)==3] * ii.shape[1]
+                                    for _, ii in self.image_array)
+        # FIXME: split image_array
 
         if len(img.shape) == 3:
             f = 'RGB'
@@ -89,7 +124,10 @@ class DebugViewer(object):
                             self.scaled_size[0], self.scaled_size[1])
             x, y = DebugViewer.mouse_x, DebugViewer.mouse_y
             if 0 <= x < self.intensity.shape[1] and 0 <= y < self.intensity.shape[0]:
-                self.label.text = 'x: %4d   y: %4d   I: %s' % (x, y, self.intensity[y, x])
+                ii = self.intensity[y, x]
+                if not self.color_mask[x] and len(ii.shape) > 0:
+                    ii = ii[0]
+                self.label.text = 'x: %4d   y: %4d   I: %s' % (x, y, ii)
             else:
                 self.label.text = ''
         self.label.draw()
@@ -164,6 +202,10 @@ if __name__ == '__main__':
     from vi3o.mkv import Mkv
     viewer = DebugViewer()
 
-    for img in Mkv('/home/hakan/workspace/apps/hakan/pricertag/at_pricer/cam4.mkv', grey=True):
-        viewer.view(img)
+    # for img in Mkv('/home/hakan/workspace/apps/hakan/pricertag/at_pricer/cam4.mkv', grey=True):
+    #     viewer.view(img)
 
+    for img in Mjpg('/home/hakan/cognimatics/people/m3203-1.mjpg'):
+        viewer.view(img)
+        viewer.view(np.sum(img, 2), scale=True)
+        viewer.flipp()
