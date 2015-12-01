@@ -1,4 +1,7 @@
 from cffi import FFI
+import os
+
+mydir = os.path.dirname(__file__)
 
 ffi = FFI()
 ffi.cdef("""
@@ -29,6 +32,10 @@ ffi.cdef("""
         int decode_frame(struct decode *p, struct mkv_frame *frm, uint8_t *img, uint64_t *ts, int grey);
 
          """)
-ffi.set_source("_mkv", '#include "decode.h"', sources=["mkv.c", "decode.c"],
+ffi.set_source("vi3o._mkv", '#include "src/decode.h"',
+               include_dirs=[mydir],
+               sources=["src/mkv.c", "src/decode.c"],
                libraries=["avcodec", "swscale"])
-ffi.compile()
+
+if __name__ == '__main__':
+    ffi.compile()

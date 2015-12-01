@@ -1,4 +1,7 @@
 from cffi import FFI
+import os
+
+mydir = os.path.dirname(__file__)
 
 ffi = FFI()
 ffi.cdef("""
@@ -22,5 +25,10 @@ ffi.cdef("""
         int mjpg_close(struct mjpg *m);
         int mjpg_seek (struct mjpg *m, long offset);
          """)
-ffi.set_source("_mjpg", '#include "mjpg.h"', sources=["mjpg.c"], libraries=["jpeg"])
-ffi.compile()
+ffi.set_source("vi3o._mjpg", '#include "src/mjpg.h"',
+               include_dirs=[mydir],
+               sources=["src/mjpg.c"],
+               libraries=["jpeg"], )
+
+if __name__ == '__main__':
+    ffi.compile()
