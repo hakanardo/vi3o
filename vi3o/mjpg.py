@@ -3,11 +3,7 @@ import os
 
 from vi3o.utils import SlicedView
 
-try:
-    from _mjpg import ffi, lib
-except ImportError:
-    from vi3o import build_mjpg
-    from _mjpg import ffi, lib
+from _mjpg import ffi, lib
 import numpy as np
 
 class Frame(np.ndarray):

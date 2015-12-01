@@ -32,3 +32,4 @@ ffi.set_source("vi3o._mjpg", '#include "src/mjpg.h"',
 
 if __name__ == '__main__':
     ffi.compile()
+
