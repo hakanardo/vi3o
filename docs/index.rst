@@ -6,6 +6,10 @@ access to mjpg and mkv video frames. For recordings origination from Axis
 cameras the camera system time at the time of capture is provided as timestamp
 for each frame.
 
+To get system timestamps in H.264 recordings "User data" has to be enabled. It
+is found by clicking "Setup", "System Options", "Advanced", "Plain Config" and
+choosing "Image" followed by "Select group".
+
 Status
 ======
 
