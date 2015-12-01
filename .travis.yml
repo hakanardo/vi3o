@@ -10,7 +10,10 @@ addons:
     - libavcodec-dev
     - libswscale-dev
 install: "pip install -r requirements.txt"
-script: "PYTHONPATH=$PYTHONPATH:`pwd` py.test -v test"
+script:
+  - python build_mjpg.py
+  - python build_mkv.py
+  - PYTHONPATH=$PYTHONPATH:`pwd` py.test -v test
 deploy:
   provider: pypi
   user: hakanardo
