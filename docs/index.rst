@@ -53,4 +53,13 @@ Modules
 .. automodule:: vi3o
    :members:
 
+Comments and bugs
+=================
 
+There is a `mailing list`_ for general discussions and an `issue tracker`_ for reporting bugs and a `continuous integration service`_ that's running tests.
+
+.. _`issue tracker`: https://github.com/hakanardo/vi3o/issues
+.. _`mailing list`: https://groups.google.com/forum/#!forum/vi3o
+.. _`continuous integration service`: https://travis-ci.org/hakanardo/vi3o
+
+https://travis-ci.org/hakanardo/vi3o
