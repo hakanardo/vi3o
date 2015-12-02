@@ -46,6 +46,24 @@ Then there are a few different ways to install vi3o:
 
 .. _`Github`: https://github.com/hakanardo/vi3o
 
+
+Overview
+========
+
+.. code-block:: python
+
+    from vi3o import Video
+    import time
+
+    rec = Video("myfile.mkv")
+
+    for frame in rec:
+        print time.localtime(frame.systime)
+
+    subrec = rec[10:20]
+    last_frame = rec[-1]
+
+
 Modules
 =======
 
