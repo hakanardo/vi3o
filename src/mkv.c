@@ -170,10 +170,12 @@ void mkv_seek(struct mkv *s, unsigned long offset) {
     s->cur = s->data + offset;
 }
 
-void mkv_estimate_systime_offset(struct mkv *s) {
+int64_t mkv_estimate_systime_offset(struct mkv *s) {
     uint8_t *org = s->cur;
     struct mkv_frame frm;
     while (mkv_next(s, &frm));
+    if (s->systime_offset_count == 0) return 0;
     s->systime_offset = s->systime_offset_sum / s->systime_offset_count;
     s->cur = org;
+    return s->systime_offset;
 }

@@ -14,6 +14,7 @@ def test_iter():
     for i, img in enumerate(video):
         assert img.index == i
         timestamps.append(img.timestamp)
+        assert img.timestamp == img.systime
         pixels.append(img[20,30,1])
     assert len(timestamps) == 16
     assert timestamps[1] == 1445859308.97

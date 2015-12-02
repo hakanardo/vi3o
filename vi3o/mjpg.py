@@ -82,6 +82,7 @@ class MjpgIter(object):
 
         # img = img.reshape(shape).view(type=Frame)
         img.timestamp = self.m.timestamp_sec + self.m.timestamp_usec / 1000000.0
+        img.systime = img.timestamp
         img.index = self.fcnt
         self.fcnt += 1
         return img

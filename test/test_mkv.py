@@ -4,6 +4,7 @@ import os
 
 mydir = os.path.dirname(__file__)
 test_mkv = os.path.join(mydir, "t.mkv")
+systime_mkv = os.path.join(mydir, "systime.mkv")
 
 def test_iter():
     timestamps = []
@@ -51,3 +52,8 @@ def test_slice():
     assert [img[20,30,1] for img in sub] == [85, 84, 84]
     assert sub[1].timestamp == video[3].timestamp
     assert len(sub) == 3
+
+def test_systime():
+    video = Mkv(systime_mkv)
+    assert video[7].systime == 1448984844.6525
+

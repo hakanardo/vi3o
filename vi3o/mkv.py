@@ -17,31 +17,33 @@ class Mkv(object):
         open(filename).close()
         self._myiter = None
         self._index = None
+        self.systime_offset = 0
+
+        if os.path.exists(self.filename + '.idx'):
+            index = json.load(open(self.filename + '.idx'))
+            self.frame = index['frame']
+            self.systime_offset = index['systime_offset']
+        else:
+            self.frame = []
+            m = lib.mkv_open(self.filename)
+            frm = ffi.new('struct mkv_frame *')
+            while lib.mkv_next(m, frm):
+                self.frame.append([frm.pts, frm.offset, frm.key_frame])
+            self.frame.sort()
+            self.systime_offset = iter(self).estimate_systime_offset()
+
+            with open(self.filename + '.idx', 'w') as fd:
+                json.dump({'frame': self.frame,
+                           'systime_offset': self.systime_offset}, fd)
 
     def __iter__(self):
-        return MkvIter(self.filename, self.grey)
+        return MkvIter(self.filename, self.systime_offset, self.grey)
 
     @property
     def myiter(self):
         if self._myiter is None:
             self._myiter = iter(self)
         return self._myiter
-
-    @property
-    def frame(self):
-        if self._index is None:
-            if os.path.exists(self.filename + '.idx'):
-                self._index = json.load(open(self.filename + '.idx'))
-            else:
-                self._index = []
-                m = lib.mkv_open(self.filename)
-                frm = ffi.new('struct mkv_frame *')
-                while lib.mkv_next(m, frm):
-                    self._index.append([frm.pts, frm.offset, frm.key_frame])
-                self._index.sort()
-                with open(self.filename + '.idx', 'w') as fd:
-                    json.dump(self._index, fd)
-        return self._index
 
     def __getitem__(self, item):
         if isinstance(item, slice):
@@ -67,8 +69,9 @@ class DecodeError(Exception):
     pass
 
 class MkvIter(object):
-    def __init__(self, filename, grey=False):
+    def __init__(self, filename, systime_offset, grey=False):
         self.m = lib.mkv_open(filename)
+        self.systime_offset = systime_offset
         self.frm = ffi.new('struct mkv_frame *')
         self.out_of_packages = False
         self.largest_seen_timestamp = -1
@@ -85,6 +88,9 @@ class MkvIter(object):
             self.channels = 3
         if not self.m:
             raise IOError("Failed to open: " + filename)
+
+    def estimate_systime_offset(self):
+        return lib.mkv_estimate_systime_offset(self.m)
 
     def __iter__(self):
         return self
@@ -120,6 +126,7 @@ class MkvIter(object):
         img.index = self.fcnt
         img.pts = self.pts[0]
         img.timestamp = float(img.pts) / 1000000.0
+        img.systime = float(img.pts + self.systime_offset) / 1000000.0
         self.last_returned_timestamp = self.pts[0]
         self.fcnt += 1
         return img

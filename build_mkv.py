@@ -25,11 +25,11 @@ ffi.cdef("""
         void mkv_close(struct mkv *s);
         int mkv_next(struct mkv *s, struct mkv_frame *frm);
         void mkv_seek(struct mkv *s, unsigned long offset);
-        void mkv_estimate_systime_offset(struct mkv *s);
 
         struct decode;
         struct decode *decode_open(struct mkv *m);
         int decode_frame(struct decode *p, struct mkv_frame *frm, uint8_t *img, uint64_t *ts, int grey);
+        int64_t mkv_estimate_systime_offset(struct mkv *s);
 
          """)
 ffi.set_source("vi3o._mkv", '#include "src/decode.h"',
