@@ -80,4 +80,3 @@ There is a `mailing list`_ for general discussions and an `issue tracker`_ for r
 .. _`mailing list`: https://groups.google.com/forum/#!forum/vi3o
 .. _`continuous integration service`: https://travis-ci.org/hakanardo/vi3o
 
-https://travis-ci.org/hakanardo/vi3o
