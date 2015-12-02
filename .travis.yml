@@ -11,9 +11,8 @@ addons:
     - libswscale-dev
 install: "pip install -r requirements.txt"
 script:
-  - python build_mjpg.py
-  - python build_mkv.py
-  - PYTHONPATH=$PYTHONPATH:`pwd` py.test -v test
+  - python setup.py build_ext --inplace
+  - python setup.py test
 deploy:
   provider: pypi
   user: hakanardo
