@@ -21,7 +21,7 @@ def test_iter():
     assert timestamps[1] == 0.04
     assert pixels[:6] == [84, 85, 85, 84, 84, 86]
 
-    pixels = [video[i][20,30,1] for i in xrange(6)]
+    pixels = [video[i][20,30,1] for i in range(6)]
     assert pixels == [84, 85, 85, 84, 84, 86]
 
     assert video[2].timestamp == 0.08

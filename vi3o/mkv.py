@@ -1,7 +1,6 @@
 import json
-import os
-
-from _mkv import ffi, lib
+import os, sys
+from vi3o._mkv import ffi, lib
 import numpy as np
 
 from vi3o.utils import SlicedView
@@ -12,6 +11,8 @@ class Frame(np.ndarray):
 
 class Mkv(object):
     def __init__(self, filename, grey=False):
+        if sys.version_info > (3,):
+            filename = bytes(filename, "utf8")
         self.filename = filename
         self.grey = grey
         open(filename).close()
@@ -19,8 +20,8 @@ class Mkv(object):
         self._index = None
         self.systime_offset = 0
 
-        if os.path.exists(self.filename + '.idx'):
-            index = json.load(open(self.filename + '.idx'))
+        if os.path.exists(self.filename + b'.idx'):
+            index = json.load(open(self.filename + b'.idx'))
             self.frame = index['frame']
             self.systime_offset = index['systime_offset']
         else:
@@ -32,7 +33,7 @@ class Mkv(object):
             self.frame.sort()
             self.systime_offset = iter(self).estimate_systime_offset()
 
-            with open(self.filename + '.idx', 'w') as fd:
+            with open(self.filename + b'.idx', 'w') as fd:
                 json.dump({'frame': self.frame,
                            'systime_offset': self.systime_offset}, fd)
 
@@ -131,3 +132,5 @@ class MkvIter(object):
         self.fcnt += 1
         return img
 
+    def __next__(self):
+        return self.next()

@@ -1,3 +1,7 @@
+import sys
+if sys.version_info > (3,):
+    xrange = range
+
 class SlicedView(object):
     def __init__(self, parent, indexes):
         self.parent = parent

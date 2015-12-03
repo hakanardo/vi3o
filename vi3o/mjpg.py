@@ -1,9 +1,7 @@
 import json
-import os
-
+import os, sys
 from vi3o.utils import SlicedView
-
-from _mjpg import ffi, lib
+from vi3o._mjpg import ffi, lib
 import numpy as np
 
 class Frame(np.ndarray):
@@ -11,6 +9,8 @@ class Frame(np.ndarray):
 
 class Mjpg(object):
     def __init__(self, filename, grey=False):
+        if sys.version_info > (3,):
+            filename = bytes(filename, "utf8")
         self.filename = filename
         self.grey = grey
         open(filename).close()
@@ -29,11 +29,11 @@ class Mjpg(object):
     @property
     def offset(self):
         if self._index is None:
-            if os.path.exists(self.filename + '.idx'):
-                self._index = json.load(open(self.filename + '.idx'))
+            if os.path.exists(self.filename + b'.idx'):
+                self._index = json.load(open(self.filename + b'.idx'))
             else:
                 self._index = [self.myiter.m.start_position_in_file for img in self.myiter]
-                with open(self.filename + '.idx', 'w') as fd:
+                with open(self.filename + b'.idx', 'w') as fd:
                     json.dump(self._index, fd)
         return self._index
 
@@ -86,4 +86,7 @@ class MjpgIter(object):
         img.index = self.fcnt
         self.fcnt += 1
         return img
+
+    def __next__(self):
+        return self.next()
 
