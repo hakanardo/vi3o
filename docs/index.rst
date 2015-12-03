@@ -2,9 +2,9 @@ vi3o - VIdeo and Image IO
 =========================
 
 Utility for loading/saving/displaying video and images. It gives random
-access to mjpg and mkv video frames. For recordings origination from Axis
-cameras the camera system time at the time of capture is provided as timestamp
-for each frame.
+access to mjpg (in http multipart format) and H264 (in .mkv format) video
+frames. For recordings origination from Axis cameras the camera system
+time at the time of capture is provided as timestamp for each frame.
 
 To get system timestamps in H.264 recordings "User data" has to be enabled. It
 is found by clicking "Setup", "System Options", "Advanced", "Plain Config" and
@@ -50,18 +50,42 @@ Then there are a few different ways to install vi3o:
 Overview
 ========
 
+Video recordings are are handled using *Video* objects, which are sliceable to
+provide video object representing only part of the entire file,
+
 .. code-block:: python
 
     from vi3o import Video
-    import time
 
-    rec = Video("myfile.mkv")
+    recoding = Video("myfile.mkv")
+    monochrome = Video("myfile.mkv", grey=True)
 
-    for frame in rec:
-        print time.localtime(frame.systime)
+    first_part = recoding[:250]
+    last_part = recoding[-250:]
+    half_frame_rate = recoding[::2]
+    backwards = recoding[::-1]
 
-    subrec = rec[10:20]
-    last_frame = rec[-1]
+The video object can be used to iterate over the frames in the video,
+
+.. code-block:: python
+
+    for frame in recoding:
+        ...
+
+It also supoprts random access to any frame,
+
+.. code-block:: python
+
+    first_frame = recoding[0]
+    second_frame = recoding[1]
+    last_frame = recoding[-1]
+
+The frame objects returned are numpy ndarray subclasses with four extra properties,
+
+ - *frame.index* - The index of the frame within in the video (i.e *video[frame.index] == frame*)
+ - *frame.timestamp* - The timestamp of the frame as a float in seconds
+ - *frame.systime* - The system timestamp specifying when the frame was aquired (a float of seconds elapsed since the Epoch, 1970-01-01 00:00:00 +0000).
+
 
 
 Modules

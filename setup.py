@@ -21,10 +21,10 @@ setup(
     name='vi3o',
     description='VIdeo and Image IO',
     long_description='''
-    Utility for loading/saving/displaying video and images. It gives random
-    access to mjpg and mkv video frames. For recordings origination from Axis
-    cameras the camera system time at the time of capture is provided as timestamp
-    for each frame.
+Utility for loading/saving/displaying video and images. It gives random
+access to mjpg (in http multipart format) and H264 (in .mkv format) video
+frames. For recordings origination from Axis cameras the camera system
+time at the time of capture is provided as timestamp for each frame.
     ''',
     version=__version__,
     packages=['vi3o'],
