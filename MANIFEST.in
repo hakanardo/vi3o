@@ -1,0 +1,2 @@
+include build_*.py src/*.h
+include LICENSE README.rst requirements.txt

@@ -1,7 +1,7 @@
 from cffi import FFI
 import os
 
-mydir = os.path.dirname(__file__)
+mydir = os.path.abspath(os.path.dirname(__file__))
 
 ffi = FFI()
 ffi.cdef("""
