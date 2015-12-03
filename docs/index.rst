@@ -80,7 +80,7 @@ It also supoprts random access to any frame,
     second_frame = recoding[1]
     last_frame = recoding[-1]
 
-The frame objects returned are numpy ndarray subclasses with four extra properties,
+The frame objects returned are numpy ndarray subclasses with a few extra properties,
 
  - *frame.index* - The index of the frame within in the video (i.e *video[frame.index] == frame*)
  - *frame.timestamp* - The timestamp of the frame as a float in seconds
