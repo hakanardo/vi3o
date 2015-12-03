@@ -10,6 +10,12 @@
 
 #include "decode.h"
 
+#if (LIBAVUTIL_VERSION_MAJOR < 55)
+#define AV_CODEC_ID_H264 CODEC_ID_H264
+#define AV_PIX_FMT_RGB24 PIX_FMT_RGB24
+#define AV_PIX_FMT_GRAY8 PIX_FMT_GRAY8
+#endif
+
 struct decode {
     AVCodec* codec;                                                                        /* the AVCodec* which represents the H264 decoder */
     AVCodecContext* codec_context;                                                         /* the context; keeps generic state */
