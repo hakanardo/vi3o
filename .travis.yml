@@ -5,7 +5,6 @@ python:
 - '3.4'
 os:
 - 'linux'
-- 'osx'
 addons:
   apt:
     packages:
