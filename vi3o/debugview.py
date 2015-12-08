@@ -198,6 +198,11 @@ def view(img, name='Default', scale=False):
 def viewsc(img, name='Default'):
     view(img, name, True)
 
+def flipp(name='Default'):
+    if name not in DebugViewer.named_viewers:
+        DebugViewer.named_viewers[name] = DebugViewer(name)
+    DebugViewer.named_viewers[name].flipp()
+
 if __name__ == '__main__':
     from vi3o.mkv import Mkv
     viewer = DebugViewer()
