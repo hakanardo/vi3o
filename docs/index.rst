@@ -46,7 +46,6 @@ Then there are a few different ways to install vi3o:
 
 .. _`Github`: https://github.com/hakanardo/vi3o
 
-
 Overview
 ========
 
@@ -80,19 +79,56 @@ It also supoprts random access to any frame,
     second_frame = recoding[1]
     last_frame = recoding[-1]
 
-The frame objects returned are numpy ndarray subclasses with a few extra properties,
+The frame objects returned are numpy ndarray subclasses with a few extra properties:
 
- - *frame.index* - The index of the frame within in the video (i.e *video[frame.index] == frame*)
- - *frame.timestamp* - The timestamp of the frame as a float in seconds
- - *frame.systime* - The system timestamp specifying when the frame was aquired (a float of seconds elapsed since the Epoch, 1970-01-01 00:00:00 +0000).
+     - *frame.index* - The index of the frame within in the video (i.e *video[frame.index] == frame*)
+     - *frame.timestamp* - The timestamp of the frame as a float in seconds
+     - *frame.systime* - The system timestamp specifying when the frame was aquired (a float of seconds elapsed since the Epoch, 1970-01-01 00:00:00 +0000).
 
+The video frames can be displayed using the debug viewer,
 
+.. code-block:: python
+
+    from vi3o import Video, view
+
+    for img in Video("myfile.mkv"):
+        view(img)
+
+This opens a window showing the video which can be controlled using:
+
+    - Space - pauses and unpases
+    - Enter - step forward a single frame if paused
+    - Mouse wheel - zoomes in/out the video
+    - Click and drag - pan around in the video
+    - z - zoomes video to fit the window
+    - f - toggles fullscreen mode
+    - d - starts pdb debugger
+
+To show multiple images side by side in the window, call :func:`vi3o.flipp` to start colled images
+and then once more to show the collected images and restart the collecting:
+
+.. code-block:: python
+
+    from vi3o import Video, view, flipp
+
+    for img in Video("myfile.mkv"):
+        flipp()
+
+        brighter = 2 * img
+        darker = 0.5 * img
+
+        view(img)
+        view(brighter)
+        view(darker)
 
 Modules
 =======
 
 
 .. automodule:: vi3o
+   :members:
+
+.. automodule:: vi3o.image
    :members:
 
 Comments and bugs
