@@ -24,6 +24,7 @@ struct mkv {
     int width, height;
     char mac[13];
     int64_t systime_offset_sum, systime_offset_count, systime_offset;
+    unsigned long cluster_offset;
 };
 
 struct mkv *mkv_open(char *filename);

@@ -114,6 +114,7 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
                 s->time_scale = get_uint(s, len);
                 break;
             case 0x1f43b675: // Cluster
+                s->cluster_offset = offset;
                 break;
             case 0xE7: // Timecode
                 s->time_offset = get_uint(s, len);
@@ -128,7 +129,7 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
                     frm->systime = 0;
                 }
                 frm->data = s->cur + 4;
-                frm->offset = offset;
+                frm->offset = s->cluster_offset;
                 frm->len = len - 4;
                 frm->key_frame = (s->cur[3]&0x80)>>7;
                 s->cur += len;
@@ -168,6 +169,7 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
 void mkv_seek(struct mkv *s, unsigned long offset) {
     assert(offset < s->len);
     s->cur = s->data + offset;
+
 }
 
 int64_t mkv_estimate_systime_offset(struct mkv *s) {
