@@ -22,6 +22,7 @@ class Mkv(object):
 
         if os.path.exists(self.filename + b'.idx'):
             index = json.load(open(self.filename + b'.idx'))
+            assert index['version'] == 2
             self.frame = index['frame']
             self.systime_offset = index['systime_offset']
         else:
@@ -40,7 +41,8 @@ class Mkv(object):
 
             with open(self.filename + b'.idx', 'w') as fd:
                 json.dump({'frame': self.frame,
-                           'systime_offset': self.systime_offset}, fd)
+                           'systime_offset': self.systime_offset,
+                           'version': 2}, fd)
 
     def __iter__(self):
         return MkvIter(self.filename, self.systime_offset, self.grey)
