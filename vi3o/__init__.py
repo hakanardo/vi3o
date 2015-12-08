@@ -10,3 +10,20 @@ def Video(filename, grey=False):
         return Mjpg(filename, grey)
     else:
         raise NotImplementedError("'%s' has unknown file extension." % filename)
+
+def _get_debug_viewer(name):
+    from vi3o.debugview import DebugViewer
+    if name not in DebugViewer.named_viewers:
+        DebugViewer.named_viewers[name] = DebugViewer(name)
+    return DebugViewer.named_viewers[name]
+
+
+def view(img, name='Default', scale=False):
+    _get_debug_viewer(name).view(img, scale)
+
+def viewsc(img, name='Default'):
+    view(img, name, True)
+
+def flipp(name='Default'):
+    _get_debug_viewer(name).flipp()
+

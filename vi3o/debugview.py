@@ -4,9 +4,6 @@ from pyglet.gl import glTexParameteri, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FIL
 from vi3o.image import ptpscale
 import numpy as np
 
-from vi3o.mjpg import Mjpg
-
-
 class DebugViewer(object):
     paused = False
     step_counter = 0
@@ -189,28 +186,13 @@ class DebugViewer(object):
         if self.clicking:
             print DebugViewer.mouse_x, DebugViewer.mouse_y
 
-
-def view(img, name='Default', scale=False):
-    if name not in DebugViewer.named_viewers:
-        DebugViewer.named_viewers[name] = DebugViewer(name)
-    DebugViewer.named_viewers[name].view(img, scale)
-
-def viewsc(img, name='Default'):
-    view(img, name, True)
-
-def flipp(name='Default'):
-    if name not in DebugViewer.named_viewers:
-        DebugViewer.named_viewers[name] = DebugViewer(name)
-    DebugViewer.named_viewers[name].flipp()
-
 if __name__ == '__main__':
-    from vi3o.mkv import Mkv
-    viewer = DebugViewer()
+    from vi3o import Video, view
+    import sys
 
-    # for img in Mkv('/home/hakan/workspace/apps/hakan/pricertag/at_pricer/cam4.mkv', grey=True):
-    #     viewer.view(img)
+    if len(sys.argv) != 2:
+        print "Usage: python -mvi3o.debugview <video file>"
+        exit(-1)
 
-    for img in Mjpg('/home/hakan/cognimatics/people/m3203-1.mjpg'):
-        viewer.view(img)
-        viewer.view(np.sum(img, 2), scale=True)
-        viewer.flipp()
+    for img in Video(sys.argv[1]):
+        view(img)
