@@ -7,8 +7,8 @@
 
 #include "mjpg.h"
 
-//#define d_printf(...) fprintf(stderr, __VA_ARGS__)
-#define d_printf(...)
+#define d_printf(...) fprintf(stderr, __VA_ARGS__)
+//#define d_printf(...)
 
 #ifndef N_RETRIES
 #  define N_RETRIES 3
@@ -113,13 +113,13 @@ int mjpg_open(struct mjpg *m, char *name, int type, int dataOrder) {
 
 int mjpg_open_fd(struct mjpg *m, FILE *fd, int type, int dataOrder) {
   m->fd=fd;
-  
+
   if (dataOrder==IMORDER_PLANAR && type!=IMTYPE_GRAY &&
       type!=IMTYPE_YCbCr) {
     d_printf("MJPG: Can only return raw data in planar format\n");
     return ERROR_ILLEGALARGUMENT;
   }
-  
+
   m->cameraDecomp.err = jpeg_std_error(&(m->cameraJerr.pub));
   m->cameraJerr.pub.error_exit = my_error_exit;    
   jpeg_create_decompress(&(m->cameraDecomp));
@@ -175,7 +175,7 @@ int mjpg_next_head(struct mjpg *m) {
   if (m->dataOrder==IMORDER_PLANAR_SUBX ||
       m->dataOrder==IMORDER_PLANAR_SUBXY)
     m->dataOrder=IMORDER_PLANAR;
-  
+
   if (m->type==IMTYPE_GRAY) {
     ch=1;
     m->cameraDecomp.out_color_space=JCS_GRAYSCALE;
@@ -200,7 +200,7 @@ int mjpg_next_head(struct mjpg *m) {
         JPOOL_PERMANENT,
         m->width*ch,1);
     } else if (m->dataOrder==IMORDER_PLANAR) {
-      for(i=0; i<3; i++) {
+      for(i=0; i<m->cameraDecomp.num_components; i++) {
         m->cameraBuffer[i] = (*m->cameraDecomp.mem->alloc_sarray)(
           (j_common_ptr) &m->cameraDecomp, 
           JPOOL_PERMANENT,
@@ -283,7 +283,9 @@ int mjpg_next_data(struct mjpg *m) {
     cr=cb+m->width*ch*m->height;
 
     row_stride=m->cameraDecomp.max_v_samp_factor * DCTSIZE;
-    if (m->cameraDecomp.num_components!=3 || 
+    if (m->cameraDecomp.num_components==1 && ch==1 && m->type==IMTYPE_GRAY) {
+      // Greyscale images are fine
+    } else if (m->cameraDecomp.num_components!=3 ||
         m->cameraDecomp.comp_info[0].h_samp_factor!=2 || 
         (m->cameraDecomp.comp_info[0].v_samp_factor!=1 &&
          m->cameraDecomp.comp_info[0].v_samp_factor!=2) ||
