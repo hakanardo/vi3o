@@ -61,3 +61,6 @@ def test_imrotate():
     assert all(rot[12:, :17].flat == 0)
     assert all(rot[12:, 17:29].flat == 255)
     assert all(rot[12:, 29:].flat == 0)
+
+    rot = imrotate(img, 1.6, [16, 0], [16*2, 12*2], point=[16, 0])
+    assert all(np.round(rot, 6) == [16, 12])

@@ -52,20 +52,23 @@ def imscale(img, size, interpolation=NEAREST):
     size = map(int, size)
     return np.array(PIL.Image.fromarray(img).resize(size, interpolation))
 
-def imrotate(img, angle, center=None, size=None, interpolation=NEAREST):
-    h, w = img.shape[:2]
+def imrotate(img, angle, center=None, size=None, interpolation=NEAREST, point=None):
     if center is None:
+        h, w = img.shape[:2]
         center = (w/2, h/2)
     if size is None:
+        h, w = img.shape[:2]
         size = (w, h)
     else:
         size = tuple(size)
     cx, cy = size[0] / 2, size[1] / 2
     s, c = np.sin(angle),  np.cos(angle)
-    # data = [c, -s, -c*center[0] + s*center[1] + cx,
-    #         s,  c, -s*center[0] - c*center[1] + cy]
     data = [c, -s, -c*cx + s*cy + center[0],
             s,  c, -s*cx - c*cy + center[1]]
+    if point is not None:
+        a, b, c, d, e, f, _, _, _ = np.linalg.inv(np.vstack((np.reshape(data, (2, 3)), [0, 0, 1]))).flat
+        x, y = point
+        return a*x + b*y + c, d*x + e*y + f
     return np.array(PIL.Image.fromarray(img).transform(size, PIL.Image.AFFINE, data, interpolation))
 
 
