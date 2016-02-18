@@ -6,6 +6,7 @@
 import PIL.Image
 import numpy as np
 import os
+from vi3o import view
 
 NEAREST = PIL.Image.NEAREST
 BILINEAR = PIL.Image.BILINEAR
@@ -61,6 +62,15 @@ def ptpscale(img):
         return np.zeros_like(img)
     return (img - a) * (255.0 / (b - a))
 
+
+def imshow(img):
+    view(img, pause=True)
+
+def imshowsc(img):
+    view(img, scale=True, pause=True)
+
+imview = imshow
+imviewsc = imshowsc
 
 class ImageDirOut(object):
     """

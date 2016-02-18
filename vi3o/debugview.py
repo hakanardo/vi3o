@@ -43,7 +43,7 @@ class DebugViewer(object):
     def _inc_fcnt(self):
         self.fcnt += 1
 
-    def view(self, img, scale=False, intensity=None):
+    def view(self, img, scale=False, intensity=None, pause=None):
         if img.dtype == 'bool':
             img = img.astype('B')
         if intensity is None:
@@ -52,6 +52,9 @@ class DebugViewer(object):
             img = ptpscale(img)
         if img.dtype != 'B':
             img = np.minimum(np.maximum(img, 0), 255).astype('B')
+
+        if pause is not None:
+            DebugViewer.paused = pause
 
         if self.autoflipp:
             self.image_array = [(img, intensity)]
@@ -184,7 +187,7 @@ class DebugViewer(object):
 
     def on_mouse_release(self, x, y, button, modifiers):
         if self.clicking:
-            print DebugViewer.mouse_x, DebugViewer.mouse_y
+            print(DebugViewer.mouse_x, DebugViewer.mouse_y)
 
 if __name__ == '__main__':
     from vi3o import Video, view

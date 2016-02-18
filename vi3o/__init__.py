@@ -22,19 +22,19 @@ def _get_debug_viewer(name):
     return DebugViewer.named_viewers[name]
 
 
-def view(img, name='Default', scale=False):
+def view(img, name='Default', scale=False, pause=None):
     """
     Show the image *img* (a numpy array) in the debug viewer window named *name*.
     If *scale* is true the image intensities are rescaled to cover the 0..255
     range.
     """
-    _get_debug_viewer(name).view(img, scale)
+    _get_debug_viewer(name).view(img, scale, pause=pause)
 
-def viewsc(img, name='Default'):
+def viewsc(img, name='Default', pause=None):
     """
     Calls :func:`vi3o.view` with *scale=True*.
     """
-    view(img, name, True)
+    view(img, name, True, pause)
 
 def flipp(name='Default'):
     """

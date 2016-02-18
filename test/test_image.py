@@ -1,6 +1,10 @@
 from vi3o.image import *
-from util import TempDir
+from test.util import TempDir
 import numpy as np
+
+mydir = os.path.dirname(__file__)
+test_jpg = os.path.join(mydir, "img00000000.jpg")
+
 
 def test_save_load():
     with TempDir() as d:
@@ -49,3 +53,7 @@ def test_imgdir():
         out.view(img)
         out.view(img)
         assert len(os.listdir(d)) == 4
+
+def test_imrotate():
+    img = imread(test_jpg)
+    imview(img)
