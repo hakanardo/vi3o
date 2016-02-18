@@ -41,16 +41,32 @@ def imread(filename):
     return np.array(PIL.Image.open(filename))
 
 
-def imscale(img, shape, interpolation=NEAREST):
+def imscale(img, size, interpolation=NEAREST):
     """
-    Scales the image *img* into a new size specified by *shape*. It can either be a number
+    Scales the image *img* into a new size specified by *size*. It can either be a number
     specifying a factor that relates the old size of the new or a 2-tuple with new size as
     *(width, height)*.
     """
-    if isinstance(shape, float) or isinstance(shape, int):
-        shape = (shape * img.shape[1], shape * img.shape[0])
-    shape = map(int, shape)
-    return np.array(PIL.Image.fromarray(img).resize(shape, interpolation))
+    if isinstance(size, float) or isinstance(size, int):
+        size = (size * img.shape[1], size * img.shape[0])
+    size = map(int, size)
+    return np.array(PIL.Image.fromarray(img).resize(size, interpolation))
+
+def imrotate(img, angle, center=None, size=None, interpolation=NEAREST):
+    h, w = img.shape[:2]
+    if center is None:
+        center = (w/2, h/2)
+    if size is None:
+        size = (w, h)
+    else:
+        size = tuple(size)
+    cx, cy = size[0] / 2, size[1] / 2
+    s, c = np.sin(angle),  np.cos(angle)
+    # data = [c, -s, -c*center[0] + s*center[1] + cx,
+    #         s,  c, -s*center[0] - c*center[1] + cy]
+    data = [c, -s, -c*cx + s*cy + center[0],
+            s,  c, -s*cx - c*cy + center[1]]
+    return np.array(PIL.Image.fromarray(img).transform(size, PIL.Image.AFFINE, data, interpolation))
 
 
 def ptpscale(img):

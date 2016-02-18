@@ -55,5 +55,9 @@ def test_imgdir():
         assert len(os.listdir(d)) == 4
 
 def test_imrotate():
-    img = imread(test_jpg)
-    imview(img)
+    img = np.ones([12, 16], 'B') * 255
+    rot = imrotate(img, 1.6, [16, 0], [16*2, 12*2])
+    assert all(rot[:12].flat == 0)
+    assert all(rot[12:, :17].flat == 0)
+    assert all(rot[12:, 17:29].flat == 255)
+    assert all(rot[12:, 29:].flat == 0)
