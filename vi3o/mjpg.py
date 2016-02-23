@@ -29,7 +29,7 @@ class Mjpg(object):
     @property
     def offset(self):
         if self._index is None:
-            idx = index_file(self.filename)
+            idx = index_file(self.filename, self.grey)
             if os.path.exists(idx):
                 self._index = json.load(open(idx))
             else:

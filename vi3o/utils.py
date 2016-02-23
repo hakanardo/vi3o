@@ -13,9 +13,9 @@ class SlicedView(object):
     def __len__(self):
         return len(self.range)
 
-def index_file(fn):
+def index_file(fn, extradata=None):
     stats = os.stat(fn)
-    key = str((os.path.abspath(fn), stats.st_size, stats.st_mtime))
+    key = str((os.path.abspath(fn), stats.st_size, stats.st_mtime, extradata))
     key = hashlib.md5(key).hexdigest()
     path = os.path.join(os.path.expanduser('~'), ".cache", "vi3o", key + '.idx')
     d = os.path.dirname(path)
