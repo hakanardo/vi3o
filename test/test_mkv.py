@@ -2,6 +2,8 @@ from py.test import raises
 from vi3o.mkv import Mkv
 import os
 
+from vi3o.utils import index_file
+
 mydir = os.path.dirname(__file__)
 test_mkv = os.path.join(mydir, "t.mkv")
 systime_mkv = os.path.join(mydir, "systime.mkv")
@@ -10,8 +12,8 @@ def test_iter():
     timestamps = []
     pixels = []
     video = Mkv(test_mkv)
-    if os.path.exists(test_mkv + '.idx'):
-        os.unlink(test_mkv + '.idx')
+    if os.path.exists(index_file(test_mkv)):
+        os.unlink(index_file(test_mkv))
     for i, img in enumerate(video):
         assert img.index == i
         timestamps.append(img.timestamp)
@@ -37,8 +39,8 @@ def test_iter():
         video[100]
 
 def test_idx():
-    if os.path.exists(test_mkv + '.idx'):
-        os.unlink(test_mkv + '.idx')
+    if os.path.exists(index_file(test_mkv)):
+        os.unlink(index_file(test_mkv))
     test_iter()
     test_iter()
 

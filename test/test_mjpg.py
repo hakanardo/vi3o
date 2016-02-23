@@ -1,5 +1,6 @@
 from py.test import raises
 from vi3o.mjpg import Mjpg
+from vi3o.utils import index_file
 import os
 
 mydir = os.path.dirname(__file__)
@@ -9,8 +10,8 @@ def test_iter():
     timestamps = []
     pixels = []
     video = Mjpg(test_mjpg)
-    if os.path.exists(test_mjpg + '.idx'):
-        os.unlink(test_mjpg + '.idx')
+    if os.path.exists(index_file(test_mjpg)):
+        os.unlink(index_file(test_mjpg))
     for i, img in enumerate(video):
         assert img.index == i
         timestamps.append(img.timestamp)
@@ -32,8 +33,8 @@ def test_iter():
         video[100]
 
 def test_idx():
-    if os.path.exists(test_mjpg + '.idx'):
-        os.unlink(test_mjpg + '.idx')
+    if os.path.exists(index_file(test_mjpg)):
+        os.unlink(index_file(test_mjpg))
     test_iter()
     test_iter()
 

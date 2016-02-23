@@ -1,6 +1,6 @@
 import json
 import os, sys
-from vi3o.utils import SlicedView
+from vi3o.utils import SlicedView, index_file
 from vi3o._mjpg import ffi, lib
 import numpy as np
 
@@ -29,11 +29,12 @@ class Mjpg(object):
     @property
     def offset(self):
         if self._index is None:
-            if os.path.exists(self.filename + b'.idx'):
-                self._index = json.load(open(self.filename + b'.idx'))
+            idx = index_file(self.filename)
+            if os.path.exists(idx):
+                self._index = json.load(open(idx))
             else:
                 self._index = [self.myiter.m.start_position_in_file for img in self.myiter]
-                with open(self.filename + b'.idx', 'w') as fd:
+                with open(idx, 'w') as fd:
                     json.dump(self._index, fd)
         return self._index
 
