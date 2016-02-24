@@ -66,7 +66,9 @@ class DebugViewer(object):
         else:
             self.image_array.append((img, intensity))
 
-    def flipp(self):
+    def flipp(self, pause=None):
+        if pause is not None:
+            DebugViewer.paused = pause
         if not self.autoflipp:
             self._inc_fcnt()
             self._view_image_array()
@@ -76,12 +78,26 @@ class DebugViewer(object):
         self.image_array = []
 
 
+    def _pad_height(self, img, h):
+        extra = h - img.shape[0]
+        assert extra >= 0
+        if extra == 0:
+            return img
+        top = extra // 2
+        shape = list(img.shape[:2])
+        shape[0]  += extra
+        res = np.zeros(shape, img.dtype)
+        res[top:top+img.shape[0]] = img
+        return res
+
     def _stack(self, image_array):
         if max(len(img.shape) for img in image_array) == 3:
             images = [img if len(img.shape) == 3 else np.stack([img, img, img], 2)
                       for img in image_array]
         else:
             images = image_array
+        h = max(img.shape[0] for img in image_array)
+        images = [self._pad_height(img, h) for img in images]
         return np.hstack(images)
 
     def _view_image_array(self):

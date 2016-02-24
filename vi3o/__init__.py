@@ -36,11 +36,11 @@ def viewsc(img, name='Default', pause=None):
     """
     view(img, name, True, pause)
 
-def flipp(name='Default'):
+def flipp(name='Default', pause=None):
     """
     After :func:`vi3o.flipp` is called, subsequent calls to :func:`vi3o.view` will no
     longer display the images directly. Instead they will be collected and concatinated.
     On the next call to :func:`vi3o.flipp` all the collected images will be displayed.
     """
-    _get_debug_viewer(name).flipp()
+    _get_debug_viewer(name).flipp(pause)
 
