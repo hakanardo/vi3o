@@ -62,9 +62,9 @@ def test_systime():
 def test_getitem():
     video = Mkv(systime_mkv)
     idx = 31
-    for i in xrange(3):
+    for i in range(3):
         assert video[idx-1].index == idx-1
-    for i in xrange(3):
+    for i in range(3):
         assert video[idx].index == idx
-    for i in xrange(3):
+    for i in range(3):
         assert video[idx+1].index == idx+1
