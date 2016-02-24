@@ -26,7 +26,8 @@ def view(img, name='Default', scale=False, pause=None):
     """
     Show the image *img* (a numpy array) in the debug viewer window named *name*.
     If *scale* is true the image intensities are rescaled to cover the 0..255
-    range.
+    range. If *pause* is set to True/False, the viewer is paused/unpaused after the
+    image is displayed.
     """
     _get_debug_viewer(name).view(img, scale, pause=pause)
 
@@ -41,6 +42,8 @@ def flipp(name='Default', pause=None):
     After :func:`vi3o.flipp` is called, subsequent calls to :func:`vi3o.view` will no
     longer display the images directly. Instead they will be collected and concatinated.
     On the next call to :func:`vi3o.flipp` all the collected images will be displayed.
+    If *pause* is set to True/False, the viewer is paused/unpaused after the
+    image is displayed.
     """
     _get_debug_viewer(name).flipp(pause)
 

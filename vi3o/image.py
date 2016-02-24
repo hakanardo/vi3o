@@ -53,6 +53,13 @@ def imscale(img, size, interpolation=NEAREST):
     return np.array(PIL.Image.fromarray(img).resize(size, interpolation))
 
 def imrotate(img, angle, center=None, size=None, interpolation=NEAREST, point=None):
+    """
+    Rotate the image, *img*, *angle* radians around the point *center* which defaults to
+    the center of the image. The output image size is specified in *size* as *(width, height)*.
+    If *point* is specifed as *(x, y)* it will be taken as a coordinate in the original image
+    and be transformed into the corresponing coordinate in te output image and returned
+    instead of the image.
+    """
     if center is None:
         h, w = img.shape[:2]
         center = (w/2, h/2)
@@ -83,9 +90,16 @@ def ptpscale(img):
 
 
 def imshow(img):
+    """
+    Display the image *img* in the DebugViewer and pause the viewer with the image showing.
+    """
     view(img, pause=True)
 
 def imshowsc(img):
+    """
+    Rescales (and translates) the intensities of the image *img* to cover the 0..255 range.
+    Then display the image *img* in the DebugViewer and pause the viewer with the image showing.
+    """
     view(img, scale=True, pause=True)
 
 imview = imshow

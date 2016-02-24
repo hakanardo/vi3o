@@ -103,6 +103,7 @@ This opens a window showing the video which can be controlled using:
     - z - zoomes video to fit the window
     - f - toggles fullscreen mode
     - d - starts pdb debugger
+    - s - Toggle enforced rescaling of all images into the 0..255 range
 
 To show multiple images side by side in the window, call :func:`vi3o.flipp` to start colled images
 and then once more to show the collected images and restart the collecting:
