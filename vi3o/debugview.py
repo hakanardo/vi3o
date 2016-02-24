@@ -31,6 +31,7 @@ class DebugViewer(object):
         self.autoflipp = True
         self.original_image_array = None
         self.force_scale = False
+        self.prev_image_shape = None
 
     def dispatch_events(self):
         for window in pyglet.app.windows:
@@ -97,13 +98,18 @@ class DebugViewer(object):
 
         self.window.set_caption(self.name + ' - %d' % self.fcnt)
 
-        resize = self.image is None
 
         img = self._stack([img for img, _ in self.image_array])
         intensity = self._stack([ii for _, ii in self.image_array])
         self.color_mask = np.hstack([len(ii.shape)==3] * ii.shape[1]
                                     for _, ii in self.image_array)
         # FIXME: split image_array
+
+        if self.image is None:
+            resize = True
+        else:
+            resize = img.shape != self.prev_image_shape
+        self.prev_image_shape = img.shape
 
         if len(img.shape) == 3:
             f = 'RGB'
