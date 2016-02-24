@@ -1,8 +1,12 @@
+from threading import RLock
+
 import pyglet
 from pyglet.window import key as keysym
 from pyglet.gl import glTexParameteri, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_NEAREST
 from vi3o.image import ptpscale
 import numpy as np
+
+global_pyglet_lock = RLock()
 
 class DebugViewer(object):
     paused = False
@@ -13,33 +17,34 @@ class DebugViewer(object):
     named_viewers =  {}
 
     def __init__(self, name='Video'):
-        self.window = pyglet.window.Window(resizable=True, caption=name)
-        self.name = name
-        self.fcnt = 0
-        for name in dir(self):
-            if name[:3] == 'on_':
-                self.window.event(getattr(self, name))
-        self.mystep = DebugViewer.step_counter
-        self.fullscreen = False
-        self.image = None
-        self.label = pyglet.text.Label('Hello, world',
-                          font_name='Times New Roman',
-                          font_size=16,
-                          x=10, y=0,
-                          anchor_x='left', anchor_y='bottom')
-        self.label.set_style('background_color', (0,0,0,255))
-        self.autoflipp = True
-        self.original_image_array = None
-        self.force_scale = False
-        self.prev_image_shape = None
+        with global_pyglet_lock:
+            self.window = pyglet.window.Window(resizable=True, caption=name)
+            self.name = name
+            self.fcnt = 0
+            for name in dir(self):
+                if name[:3] == 'on_':
+                    self.window.event(getattr(self, name))
+            self.mystep = DebugViewer.step_counter
+            self.fullscreen = False
+            self.image = None
+            self.label = pyglet.text.Label('Hello, world',
+                              font_name='Times New Roman',
+                              font_size=16,
+                              x=10, y=0,
+                              anchor_x='left', anchor_y='bottom')
+            self.label.set_style('background_color', (0,0,0,255))
+            self.autoflipp = True
+            self.original_image_array = None
+            self.force_scale = False
+            self.prev_image_shape = None
 
-    def dispatch_events(self):
+    def _dispatch_events(self):
         for window in pyglet.app.windows:
             window.switch_to()
             window.dispatch_events()
             window.dispatch_event('on_draw')
 
-    def dispatch_event(self, *e):
+    def _dispatch_event(self, *e):
         for window in pyglet.app.windows:
             window.dispatch_event(*e)
 
@@ -47,35 +52,37 @@ class DebugViewer(object):
         self.fcnt += 1
 
     def view(self, img, scale=False, intensity=None, pause=None):
-        if img.dtype == 'bool':
-            img = img.astype('B')
-        if intensity is None:
-            intensity = img
-        if scale:
-            img = ptpscale(img)
-        if img.dtype != 'B':
-            img = np.minimum(np.maximum(img, 0), 255).astype('B')
+        with global_pyglet_lock:
+            if img.dtype == 'bool':
+                img = img.astype('B')
+            if intensity is None:
+                intensity = img
+            if scale:
+                img = ptpscale(img)
+            if img.dtype != 'B':
+                img = np.minimum(np.maximum(img, 0), 255).astype('B')
 
-        if pause is not None:
-            DebugViewer.paused = pause
+            if pause is not None:
+                DebugViewer.paused = pause
 
-        if self.autoflipp:
-            self.image_array = [(img, intensity)]
-            self._inc_fcnt()
-            self._view_image_array()
-        else:
-            self.image_array.append((img, intensity))
+            if self.autoflipp:
+                self.image_array = [(img, intensity)]
+                self._inc_fcnt()
+                self._view_image_array()
+            else:
+                self.image_array.append((img, intensity))
 
     def flipp(self, pause=None):
-        if pause is not None:
-            DebugViewer.paused = pause
-        if not self.autoflipp:
-            self._inc_fcnt()
-            self._view_image_array()
-        else:
-            self.image = None
-        self.autoflipp = False
-        self.image_array = []
+        with global_pyglet_lock:
+            if pause is not None:
+                DebugViewer.paused = pause
+            if not self.autoflipp:
+                self._inc_fcnt()
+                self._view_image_array()
+            else:
+                self.image = None
+            self.autoflipp = False
+            self.image_array = []
 
 
     def _pad_height(self, img, h):
@@ -144,7 +151,7 @@ class DebugViewer(object):
 
         self.intensity = intensity
         while True:
-            self.dispatch_events()
+            self._dispatch_events()
             if not DebugViewer.paused:
                 self.mystep = DebugViewer.step_counter
                 break
@@ -179,7 +186,7 @@ class DebugViewer(object):
         elif key == keysym.Z:
             DebugViewer.zoom = 1.0
             DebugViewer.scroll = [0, 0]
-            self.dispatch_event('on_resize', self.window.width, self.window.height)
+            self._dispatch_event('on_resize', self.window.width, self.window.height)
         elif key == keysym.S:
             if self.force_scale:
                 assert self.original_image_array is not None
@@ -216,7 +223,7 @@ class DebugViewer(object):
         self.on_mouse_motion(x, y)
         prex, prey = DebugViewer.mouse_x, DebugViewer.mouse_y
         DebugViewer.zoom *= 1.25 ** scroll_y
-        self.dispatch_event('on_resize', self.window.width, self.window.height)
+        self._dispatch_event('on_resize', self.window.width, self.window.height)
         self.on_mouse_motion(x, y)
         self.scroll[0] += (DebugViewer.mouse_x - prex) * self.scale
         self.scroll[1] -= (DebugViewer.mouse_y - prey) * self.scale
