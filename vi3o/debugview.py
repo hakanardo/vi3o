@@ -29,6 +29,7 @@ class DebugViewer(object):
                           anchor_x='left', anchor_y='bottom')
         self.label.set_style('background_color', (0,0,0,255))
         self.autoflipp = True
+        self.original_image_array = None
 
     def dispatch_events(self):
         for window in pyglet.app.windows:
@@ -42,6 +43,9 @@ class DebugViewer(object):
 
     def _inc_fcnt(self):
         self.fcnt += 1
+
+    def _dec_fcnt(self):
+        self.fcnt -= 1
 
     def view(self, img, scale=False, intensity=None, pause=None):
         if img.dtype == 'bool':
@@ -148,6 +152,19 @@ class DebugViewer(object):
             DebugViewer.zoom = 1.0
             DebugViewer.scroll = [0, 0]
             self.dispatch_event('on_resize', self.window.width, self.window.height)
+        elif key == keysym.S:
+            if self.original_image_array is None:
+                self.original_image_array = self.image_array[:]
+                for i in range(len(self.image_array)):
+                    img, intensity = self.image_array[i]
+                    img = ptpscale(img)
+                    img = np.minimum(np.maximum(img, 0), 255).astype('B')
+                    self.image_array[i] = (img, intensity)
+            else:
+                self.image_array = self.original_image_array
+                self.original_image_array = None
+            self._dec_fcnt()
+            self._view_image_array()
         elif key == keysym.D:
             import pdb; pdb.set_trace()
 
@@ -197,5 +214,10 @@ if __name__ == '__main__':
         print "Usage: python -mvi3o.debugview <video file>"
         exit(-1)
 
-    for img in Video(sys.argv[1]):
-        view(img)
+    fn = sys.argv[1]
+    if fn.split('.')[-1] in ('mkv', 'mjpg'):
+        for img in Video(sys.argv[1]):
+            view(img)
+    else:
+        from vi3o.image import imread, imshow
+        imshow(imread(fn))
