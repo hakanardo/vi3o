@@ -30,6 +30,7 @@ class DebugViewer(object):
         self.label.set_style('background_color', (0,0,0,255))
         self.autoflipp = True
         self.original_image_array = None
+        self.force_scale = False
 
     def dispatch_events(self):
         for window in pyglet.app.windows:
@@ -43,9 +44,6 @@ class DebugViewer(object):
 
     def _inc_fcnt(self):
         self.fcnt += 1
-
-    def _dec_fcnt(self):
-        self.fcnt -= 1
 
     def view(self, img, scale=False, intensity=None, pause=None):
         if img.dtype == 'bool':
@@ -62,12 +60,14 @@ class DebugViewer(object):
 
         if self.autoflipp:
             self.image_array = [(img, intensity)]
+            self._inc_fcnt()
             self._view_image_array()
         else:
             self.image_array.append((img, intensity))
 
     def flipp(self):
         if not self.autoflipp:
+            self._inc_fcnt()
             self._view_image_array()
         else:
             self.image = None
@@ -85,7 +85,16 @@ class DebugViewer(object):
 
     def _view_image_array(self):
 
-        self._inc_fcnt()
+        if self.force_scale:
+            self.original_image_array = self.image_array[:]
+            for i in range(len(self.image_array)):
+                img, intensity = self.image_array[i]
+                img = ptpscale(img)
+                img = np.minimum(np.maximum(img, 0), 255).astype('B')
+                self.image_array[i] = (img, intensity)
+        else:
+            self.original_image_array = None
+
         self.window.set_caption(self.name + ' - %d' % self.fcnt)
 
         resize = self.image is None
@@ -138,13 +147,10 @@ class DebugViewer(object):
 
         self.window.flip()
 
+    # Keys not repeated when held down
     def on_key_press(self, key, modifiers):
         if key == keysym.Q or key == keysym.ESCAPE:
             exit(0)
-        elif key == keysym.SPACE:
-            DebugViewer.paused = not DebugViewer.paused
-        elif key == keysym.ENTER:
-            DebugViewer.step_counter += 1
         elif key == keysym.F:
             self.fullscreen = not self.fullscreen
             self.window.set_fullscreen(self.fullscreen)
@@ -153,21 +159,22 @@ class DebugViewer(object):
             DebugViewer.scroll = [0, 0]
             self.dispatch_event('on_resize', self.window.width, self.window.height)
         elif key == keysym.S:
-            if self.original_image_array is None:
-                self.original_image_array = self.image_array[:]
-                for i in range(len(self.image_array)):
-                    img, intensity = self.image_array[i]
-                    img = ptpscale(img)
-                    img = np.minimum(np.maximum(img, 0), 255).astype('B')
-                    self.image_array[i] = (img, intensity)
-            else:
+            if self.force_scale:
+                assert self.original_image_array is not None
                 self.image_array = self.original_image_array
-                self.original_image_array = None
-            self._dec_fcnt()
+                self.force_scale = False
+            else:
+                self.force_scale = True
             self._view_image_array()
         elif key == keysym.D:
             import pdb; pdb.set_trace()
 
+    # Keys repeated when held down
+    def on_text(self, char):
+        if char == " ":
+            DebugViewer.paused = not DebugViewer.paused
+        elif char in "\r\n":
+            DebugViewer.step_counter += 1
 
     def on_mouse_motion(self, x, y, dx=None, dy=None):
         x = int((x - self.offset[0] - self.scroll[0]) / self.scale)
@@ -210,14 +217,14 @@ if __name__ == '__main__':
     from vi3o import Video, view
     import sys
 
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         print "Usage: python -mvi3o.debugview <video file>"
         exit(-1)
 
-    fn = sys.argv[1]
-    if fn.split('.')[-1] in ('mkv', 'mjpg'):
-        for img in Video(sys.argv[1]):
-            view(img)
-    else:
-        from vi3o.image import imread, imshow
-        imshow(imread(fn))
+    for fn in sys.argv[1:]:
+        if fn.split('.')[-1] in ('mkv', 'mjpg'):
+            for img in Video(sys.argv[1]):
+                view(img)
+        else:
+            from vi3o.image import imread, imshow
+            imshow(imread(fn))
