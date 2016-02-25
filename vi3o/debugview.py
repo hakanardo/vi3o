@@ -113,7 +113,7 @@ class DebugViewer(object):
             self.original_image_array = self.image_array[:]
             for i in range(len(self.image_array)):
                 img, intensity = self.image_array[i]
-                img = ptpscale(img)
+                img = ptpscale(intensity)
                 img = np.minimum(np.maximum(img, 0), 255).astype('B')
                 self.image_array[i] = (img, intensity)
         else:
