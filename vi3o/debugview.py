@@ -37,6 +37,7 @@ class DebugViewer(object):
             self.original_image_array = None
             self.force_scale = False
             self.prev_image_shape = None
+            self.xcoordinate_modulus = 1
 
     def _dispatch_events(self):
         for window in pyglet.app.windows:
@@ -91,7 +92,7 @@ class DebugViewer(object):
         if extra == 0:
             return img
         top = extra // 2
-        shape = list(img.shape[:2])
+        shape = list(img.shape)
         shape[0]  += extra
         res = np.zeros(shape, img.dtype)
         res[top:top+img.shape[0]] = img
@@ -204,9 +205,14 @@ class DebugViewer(object):
             DebugViewer.paused = not DebugViewer.paused
         elif char in "\r\n":
             DebugViewer.step_counter += 1
+        elif char in '123456789':
+            self.xcoordinate_modulus = int(char)
+
 
     def on_mouse_motion(self, x, y, dx=None, dy=None):
         x = int((x - self.offset[0] - self.scroll[0]) / self.scale)
+        if self.image is not None:
+            x = x % (self.image.width / self.xcoordinate_modulus)
         y = self.image.height - int((y - self.offset[1] - self.scroll[1]) / self.scale) - 1
         DebugViewer.mouse_x, DebugViewer.mouse_y = x, y
 
