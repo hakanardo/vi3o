@@ -48,4 +48,4 @@ def flipp(name='Default', pause=None):
     """
     _get_debug_viewer(name).flipp(pause)
 
-from sync import SyncedVideos
+from vi3o.sync import SyncedVideos
