@@ -41,6 +41,8 @@ class Mjpg(object):
     def __getitem__(self, item):
         if isinstance(item, slice):
             return SlicedView(self, item)
+        if (item < 0):
+            item += len(self)
         lib.mjpg_seek(self.myiter.m, self.offset[item])
         self.myiter.fcnt = item
         return self.myiter.next()

@@ -46,6 +46,23 @@ Then there are a few different ways to install vi3o:
 
 .. _`Github`: https://github.com/hakanardo/vi3o
 
+
+Whats new
+=========
+
+v0.4.0
+------
+
+* Allow negative indexes to wrap around in `Video` objects.
+* Added :class:`vi3o.SyncedVideos` for syncornizing videos using `systime`.
+* Support for showing images of different size side by side in the debug viewer.
+* Support for showing images of different size one after the other in the debug viewer.
+* Move the generated .idx files to the user .cache dir
+* Regenerate the .idx files if the video is modfied
+* Added :func:`vi3o.image.imrotate`.
+* Added :func:`vi3o.image.imshow`.
+* Added support for greyscale mjpg files.
+
 Overview
 ========
 
@@ -128,6 +145,8 @@ Modules
 
 .. automodule:: vi3o
    :members:
+   :imported-members:
+
 
 .. automodule:: vi3o.image
    :members:

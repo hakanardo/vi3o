@@ -3,6 +3,24 @@ import numpy as np
 
 
 class SyncedVideos(object):
+    """
+        Synchronize a set of videos using the `systime` timestamps. Frames will be dropped
+        to adjust the frame rate to match the video with the lowest frame rate. Initial
+        and trailing parts of the videos where there are not frames from all vidos will be
+        dropped. To for example play 3 videos syncronized side by side, use:
+
+        .. code-block:: python
+
+            from vi3o import SyncedVideos, view, flipp
+
+            for a, b, c in SyncedVideos('a.mkv', 'b.mkv', 'c.mkv'):
+                flipp()
+                view(a)
+                view(b)
+                view(c)
+
+
+    """
     def __init__(self, *filenames):
         self.videos = [Video(fn) for fn in filenames]
 

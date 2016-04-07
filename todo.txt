@@ -1,5 +1,3 @@
-Move .idx files to user cache dir
-Regenerate .idx files if video changes
 Jump between the same view in differnet videos in the debugview
 Correct x, y coords in secondary videos (status bar, klicks)
 

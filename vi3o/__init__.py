@@ -1,4 +1,9 @@
-__version_info__ = (0, 3, 5)
+"""
+:mod:`vi3o` ---  VIdeo and Image IO
+====================================
+"""
+
+__version_info__ = (0, 4, 0)
 __version__ = '.'.join(str(i) for i in __version_info__)
 
 def Video(filename, grey=False):
