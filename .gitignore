@@ -1,0 +1,6 @@
+*.pyc
+*.o
+*.so
+_*.c
+.idea
+build
