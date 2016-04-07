@@ -15,6 +15,7 @@ def Video(filename, grey=False):
     else:
         raise NotImplementedError("'%s' has unknown file extension." % filename)
 
+
 def _get_debug_viewer(name):
     from vi3o.debugview import DebugViewer
     if name not in DebugViewer.named_viewers:
@@ -47,3 +48,4 @@ def flipp(name='Default', pause=None):
     """
     _get_debug_viewer(name).flipp(pause)
 
+from sync import SyncedVideos

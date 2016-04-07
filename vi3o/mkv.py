@@ -57,6 +57,8 @@ class Mkv(object):
     def __getitem__(self, item):
         if isinstance(item, slice):
             return SlicedView(self, item)
+        if (item < 0):
+            item += len(self)
         keyindex = item
         while self.frame[keyindex][2] == 0:
             keyindex -= 1
