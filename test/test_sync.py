@@ -14,5 +14,5 @@ def test_sync():
         assert abs(a.systime - c.systime) < 0.06
         count += 1
         systimes.append((a.systime, b.systime, c.systime))
-    assert count == 104
+    assert count == 105
     assert videos.systimes == systimes
