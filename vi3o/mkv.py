@@ -44,6 +44,10 @@ class Mkv(object):
                 json.dump({'frame': self.frame,
                            'systime_offset': self.systime_offset,
                            'version': 2}, fd)
+    @property
+    def systimes(self):
+        return [float(f[0] + self.systime_offset) / 1000000.0 for f in self.frame]
+
 
     def __iter__(self):
         return MkvIter(self.filename, self.systime_offset, self.grey)

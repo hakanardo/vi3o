@@ -58,6 +58,8 @@ def test_slice():
 def test_systime():
     video = Mkv(systime_mkv)
     assert video[7].systime == 1448984844.6525
+    t = [img.systime for img in video]
+    assert t == video.systimes
 
 def test_getitem():
     video = Mkv(systime_mkv)
