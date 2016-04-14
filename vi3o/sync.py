@@ -32,7 +32,7 @@ class SyncedVideos(object):
         self._systimes = None
 
     def __iter__(self):
-        return SyncVideoIter(self.videos, self.start_index, self.start_systime, self.intervall)
+        return SyncVideoIter(self.videos, self.start_index, self.start_systime - self.intervall, self.intervall)
 
     @property
     def systimes(self):
@@ -41,11 +41,11 @@ class SyncedVideos(object):
             systime = self.start_systime
             self._systimes = []
             while True:
-                systime += self.intervall
                 try:
                     self._systimes.append(tuple(t.next_timed(systime)[1] for t in times))
                 except IndexError:
                     break
+                systime += self.intervall
         return self._systimes
 
 
@@ -55,10 +55,11 @@ class TimedIter(object):
         self.prev = 0
 
     def next_timed(self, systime):
-        while not (self.systimes[self.prev] <= systime <= self.systimes[self.prev+1]):
-            self.prev += 1
-        if systime - self.systimes[self.prev] > self.systimes[self.prev + 1] - systime:
-            self.prev += 1
+        if self.systimes[self.prev] < systime:
+            while not (self.systimes[self.prev] <= systime <= self.systimes[self.prev+1]):
+                self.prev += 1
+            if systime - self.systimes[self.prev] > self.systimes[self.prev + 1] - systime:
+                self.prev += 1
         return (self.prev, self.systimes[self.prev])
 
 class TimedVideoIter(object):
