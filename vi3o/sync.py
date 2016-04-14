@@ -27,23 +27,26 @@ class SyncedVideos(object):
         times = [TimedIter(v.systimes) for v in self.videos]
         frames = [v.next_timed(start) for v in times]
         self.start_systime = sum([f[1] for f in frames]) / len(frames)
+        self.start_index = [f[0] for f in frames]
         self.intervall = max([(v[-1].systime - v[0].systime) / len(v) for v in self.videos])
+        self._systimes = None
 
     def __iter__(self):
-        return SyncVideoIter(self.videos, self.start_systime, self.intervall)
+        return SyncVideoIter(self.videos, self.start_index, self.start_systime, self.intervall)
 
     @property
     def systimes(self):
-        times = [TimedIter(v.systimes) for v in self.videos]
-        systime = self.start_systime
-        res = []
-        while True:
-            systime += self.intervall
-            try:
-                res.append(tuple(t.next_timed(systime)[1] for t in times))
-            except IndexError:
-                break
-        return res
+        if self._systimes is None:
+            times = [TimedIter(v.systimes) for v in self.videos]
+            systime = self.start_systime
+            self._systimes = []
+            while True:
+                systime += self.intervall
+                try:
+                    self._systimes.append(tuple(t.next_timed(systime)[1] for t in times))
+                except IndexError:
+                    break
+        return self._systimes
 
 
 class TimedIter(object):
@@ -79,8 +82,8 @@ class TimedVideoIter(object):
             return p
 
 class SyncVideoIter(object):
-    def __init__(self, videos, start_systime, intervall):
-        self.videos = [TimedVideoIter(v) for v in videos]
+    def __init__(self, videos, start_index, start_systime, intervall):
+        self.videos = [TimedVideoIter(v[i:]) for v,i in zip(videos, start_index)]
         self.systime = start_systime
         self.intervall = intervall
 
