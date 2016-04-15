@@ -1,3 +1,5 @@
+from vi3o.utils import SlicedView
+
 from vi3o import Video
 import numpy as np
 
@@ -30,24 +32,46 @@ class SyncedVideos(object):
         self.start_index = [f[0] for f in frames]
         self.intervall = max([(v[-1].systime - v[0].systime) / len(v) for v in self.videos])
         self._systimes = None
+        self._indexes = None
 
     def __iter__(self):
         return SyncVideoIter(self.videos, self.start_index, self.start_systime - self.intervall, self.intervall)
 
+    def _calc_index_times(self):
+        times = [TimedIter(v.systimes) for v in self.videos]
+        systime = self.start_systime
+        self._index_times = []
+        while True:
+            try:
+                self._index_times.append(tuple(t.next_timed(systime) for t in times))
+            except IndexError:
+                break
+            systime += self.intervall
+        self._indexes = [tuple(t[0] for t in it) for it in self._index_times]
+        self._systimes = [tuple(t[1] for t in it) for it in self._index_times]
+
     @property
     def systimes(self):
         if self._systimes is None:
-            times = [TimedIter(v.systimes) for v in self.videos]
-            systime = self.start_systime
-            self._systimes = []
-            while True:
-                try:
-                    self._systimes.append(tuple(t.next_timed(systime)[1] for t in times))
-                except IndexError:
-                    break
-                systime += self.intervall
+            self._calc_index_times()
         return self._systimes
 
+    @property
+    def indexes(self):
+        if self._indexes is None:
+            self._calc_index_times()
+        return self._indexes
+
+    def __getitem__(self, item):
+        if isinstance(item, slice):
+            return SlicedView(self, item)
+        if (item < 0):
+            item += len(self)
+        idx = self.indexes[item]
+        return [v[i] for i, v in zip(idx, self.videos)]
+
+    def __len__(self):
+        return len(self.indexes)
 
 class TimedIter(object):
     def __init__(self, systimes):
