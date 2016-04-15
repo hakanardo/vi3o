@@ -38,3 +38,6 @@ def test_sync():
 
     assert last10.videos is videos.videos
 
+    assert last10.systimes == systimes[-10:]
+    assert last10.indexes == videos.indexes[-10:]
+

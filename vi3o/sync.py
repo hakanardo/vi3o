@@ -56,15 +56,22 @@ class SyncedVideos(object):
             self._calc_index_times()
         return self._systimes
 
+    def _sliced_systimes(self, range):
+        return [self.systimes[i] for i in range]
+
     @property
     def indexes(self):
         if self._indexes is None:
             self._calc_index_times()
         return self._indexes
 
+    def _sliced_indexes(self, range):
+        return [self.indexes[i] for i in range]
+
     def __getitem__(self, item):
         if isinstance(item, slice):
-            return SlicedView(self, item)
+            return SlicedView(self, item, {'systimes': self._sliced_systimes,
+                                           'indexes': self._sliced_indexes})
         if (item < 0):
             item += len(self)
         idx = self.indexes[item]

@@ -3,9 +3,10 @@ if sys.version_info > (3,):
     xrange = range
 
 class SlicedView(object):
-    def __init__(self, parent, indexes):
+    def __init__(self, parent, indexes, properties=()):
         self.parent = parent
         self.range = xrange(*indexes.indices(len(parent)))
+        self.properties = properties
 
     def __getitem__(self, item):
         return self.parent[self.range[item]]
@@ -14,6 +15,8 @@ class SlicedView(object):
         return len(self.range)
 
     def __getattr__(self, item):
+        if item in self.properties:
+            return self.properties[item](self.range)
         return getattr(self.parent, item)
 
 def index_file(fn, extradata=None):
