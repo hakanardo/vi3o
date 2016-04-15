@@ -36,3 +36,5 @@ def test_sync():
         a, b, c = last10[i]
         assert systimes[i + 95] == (a.systime, b.systime, c.systime)
 
+    assert last10.videos is videos.videos
+

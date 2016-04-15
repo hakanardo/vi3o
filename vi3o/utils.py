@@ -13,6 +13,9 @@ class SlicedView(object):
     def __len__(self):
         return len(self.range)
 
+    def __getattr__(self, item):
+        return getattr(self.parent, item)
+
 def index_file(fn, extradata=None):
     stats = os.stat(fn)
     key = str((os.path.abspath(fn), stats.st_size, stats.st_mtime, extradata))
