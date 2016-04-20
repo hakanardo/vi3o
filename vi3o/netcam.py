@@ -16,6 +16,7 @@ class AxisCam(object):
             base64string = base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
             request.add_header("Authorization", "Basic %s" % base64string)
         self._fd = urllib2.urlopen(request)
+        self.fcnt = 0
 
     def __iter__(self):
         return self
@@ -34,7 +35,9 @@ class AxisCam(object):
 
         data = self._fd.read(int(headers['Content-Length']))
         img = imread(StringIO(data)).view(Frame)
-        img.index = img.timestamp = img.systime = -1
+        img.index = self.fcnt
+        self.fcnt += 1
+        img.timestamp = img.systime = -1 # FIXME
         return img
 
 if __name__ == '__main__':
