@@ -3,7 +3,7 @@ from test.util import TempDir
 import numpy as np
 
 mydir = os.path.dirname(__file__)
-test_jpg = os.path.join(mydir, "img00000000.jpg")
+test_jpg = os.path.join(mydir, "00000000.jpg")
 
 
 def test_save_load():
@@ -64,3 +64,7 @@ def test_imrotate():
 
     rot = imrotate(img, 1.6, [16, 0], [16*2, 12*2], point=[16, 0])
     assert all(np.round(rot, 6) == [16, 12])
+
+def test_imread():
+    img = imread(test_jpg)
+    assert img.shape == (288, 360)
