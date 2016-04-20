@@ -1,4 +1,6 @@
 import sys, os, hashlib
+import numpy as np
+
 if sys.version_info > (3,):
     xrange = range
 
