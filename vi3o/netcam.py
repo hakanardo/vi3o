@@ -35,6 +35,7 @@ class AxisCam(object):
         data = self._fd.read(int(headers['Content-Length']))
         img = imread(StringIO(data)).view(Frame)
         img.index = img.timestamp = img.systime = -1
+        return img
 
 if __name__ == '__main__':
     from vi3o import view
