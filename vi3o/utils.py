@@ -2,6 +2,9 @@ import sys, os, hashlib
 if sys.version_info > (3,):
     xrange = range
 
+class Frame(np.ndarray):
+    pass
+
 class SlicedView(object):
     def __init__(self, parent, indexes, properties=()):
         self.parent = parent

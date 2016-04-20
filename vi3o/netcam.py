@@ -3,6 +3,7 @@ import urllib2
 from cStringIO import StringIO
 
 from vi3o.image import imread
+from vi3o.utils import Frame
 
 
 class AxisCam(object):
@@ -32,7 +33,8 @@ class AxisCam(object):
                 headers[l[:i]] = l[i+1:].strip()
 
         data = self._fd.read(int(headers['Content-Length']))
-        return imread(StringIO(data))
+        img = imread(StringIO(data)).view(Frame)
+        img.index = img.timestamp = img.systime = -1
 
 if __name__ == '__main__':
     from vi3o import view

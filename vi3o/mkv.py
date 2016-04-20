@@ -1,13 +1,7 @@
 import json
 import os, sys
 from vi3o._mkv import ffi, lib
-import numpy as np
-
-from vi3o.utils import SlicedView, index_file
-
-
-class Frame(np.ndarray):
-    pass
+from vi3o.utils import SlicedView, index_file, Frame
 
 class Mkv(object):
     def __init__(self, filename, grey=False):

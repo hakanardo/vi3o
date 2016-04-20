@@ -1,11 +1,7 @@
 import json
 import os, sys
-from vi3o.utils import SlicedView, index_file
+from vi3o.utils import SlicedView, index_file, Frame
 from vi3o._mjpg import ffi, lib
-import numpy as np
-
-class Frame(np.ndarray):
-    pass
 
 class Mjpg(object):
     def __init__(self, filename, grey=False):
