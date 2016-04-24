@@ -100,6 +100,7 @@ int handle_axis_block(struct mkv *s, uint8_t *data, int len, uint64_t ts) {
     return 0;
 }
 
+// FIXME: Add out of buffer checks to get_... functions
 int mkv_next(struct mkv *s, struct mkv_frame *frm) {
     while (s->cur < s->data + s->len) {
         unsigned long offset = s->cur - s->data;
@@ -120,6 +121,10 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
                 s->time_offset = get_uint(s, len);
                 break;
             case 0xa3: // SimpleBlock
+                if (s->cur + len > s->data + s->len) {
+                    memset(frm, 0, sizeof(struct mkv_frame));
+                    return 0;
+                }
                 assert(s->cur[0] == 129);
                 frm->pts = s->time_offset + (s->cur[1]<<8) + s->cur[2];
                 frm->pts *= s->time_scale / 1000;

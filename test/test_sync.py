@@ -14,19 +14,19 @@ def test_sync():
         assert abs(a.systime - c.systime) < 0.06
         count += 1
         systimes.append((a.systime, b.systime, c.systime))
-    assert count == 105
+    assert count == 104
     assert videos.systimes == systimes
 
-    assert len(videos) == 105
+    assert len(videos) == 104
     assert len(videos[:10]) == 10
     assert len(videos[-10:]) == 10
 
-    for i in range(105):
+    for i in range(104):
         a, b, c = videos[i]
         assert systimes[i] == (a.systime, b.systime, c.systime)
 
     skip50 = videos[50:]
-    for i in range(105-50):
+    for i in range(104-50):
         a, b, c = skip50[i]
         assert systimes[i+50] == (a.systime, b.systime, c.systime)
 
@@ -34,7 +34,7 @@ def test_sync():
     last10 = videos[-10:]
     for i in range(10):
         a, b, c = last10[i]
-        assert systimes[i + 95] == (a.systime, b.systime, c.systime)
+        assert systimes[i + 94] == (a.systime, b.systime, c.systime)
 
     assert last10.videos is videos.videos
 
