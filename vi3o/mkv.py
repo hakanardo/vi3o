@@ -36,6 +36,7 @@ class Mkv(object):
                 self.frame.append([frm.pts, frm.offset, frm.key_frame])
             self.frame.sort()
             self.systime_offset = iter(self).estimate_systime_offset()
+            lib.mkv_close(m)
 
             with open(idx, 'w') as fd:
                 json.dump({'frame': self.frame,
@@ -103,7 +104,7 @@ class MkvIter(object):
     def __del__(self):
         with decode_open_lock:
             self.p = lib.decode_close(self.p)
-
+        lib.mkv_close(self.m)
 
     def estimate_systime_offset(self):
         return lib.mkv_estimate_systime_offset(self.m)
