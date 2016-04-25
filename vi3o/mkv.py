@@ -100,6 +100,11 @@ class MkvIter(object):
         if not self.m:
             raise IOError("Failed to open: " + filename)
 
+    def __del__(self):
+        with decode_open_lock:
+            self.p = lib.decode_close(self.p)
+
+
     def estimate_systime_offset(self):
         return lib.mkv_estimate_systime_offset(self.m)
 

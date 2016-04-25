@@ -36,7 +36,12 @@ struct decode *decode_open(struct mkv *m) {
     p->next_time = 0;
     p->m = m;
 
-    avcodec_register_all();
+    static int avcodec_register_all_called=0;
+    if (!avcodec_register_all_called) {
+        avcodec_register_all();
+        avcodec_register_all_called = 1;
+    }
+
     p->codec = avcodec_find_decoder(AV_CODEC_ID_H264);
     assert(p->codec);
     p->codec_context = avcodec_alloc_context3(p->codec);
@@ -49,6 +54,14 @@ struct decode *decode_open(struct mkv *m) {
     p->picture = avcodec_alloc_frame();
 
     return p;
+}
+
+void decode_close(struct decode *p) {
+    av_free(p->picture);
+    p->picture = NULL;
+    avcodec_close(p->codec_context);
+    av_free(p->codec_context);
+    p->codec_context = NULL;
 }
 
 int decode_frame(struct decode *p, struct mkv_frame *frm, uint8_t *img, uint64_t *ts, int grey) {
