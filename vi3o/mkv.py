@@ -3,6 +3,9 @@ import os, sys
 from vi3o._mkv import ffi, lib
 from vi3o.utils import SlicedView, index_file, Frame
 
+from threading import Lock
+decode_open_lock = Lock()
+
 class Mkv(object):
     def __init__(self, filename, grey=False):
         if sys.version_info > (3,):
@@ -86,7 +89,8 @@ class MkvIter(object):
         lib.mkv_next(self.m, self.frm)
         assert self.m.codec_private
         assert self.m.codec_private_len > 0
-        self.p = lib.decode_open(self.m)
+        with decode_open_lock:
+            self.p = lib.decode_open(self.m)
         self.fcnt = 0
         self.pts = ffi.new('uint64_t *')
         if grey:
