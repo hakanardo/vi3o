@@ -24,11 +24,13 @@ class SlicedView(object):
             return self.properties[item](self.range)
         return getattr(self.parent, item)
 
+cache_dir = os.path.join(os.path.expanduser('~'), ".cache", "vi3o")
+
 def index_file(fn, extradata=None):
     stats = os.stat(fn)
     key = str((os.path.abspath(fn), stats.st_size, stats.st_mtime, extradata))
     key = hashlib.md5(key.encode()).hexdigest()
-    path = os.path.join(os.path.expanduser('~'), ".cache", "vi3o", key + '.idx')
+    path = os.path.join(cache_dir, key + '.idx')
     d = os.path.dirname(path)
     if not os.path.exists(d):
         os.makedirs(d)
