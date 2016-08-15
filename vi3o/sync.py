@@ -1,5 +1,4 @@
 from vi3o import Video
-import numpy as np
 
 
 class SyncedVideos(object):
