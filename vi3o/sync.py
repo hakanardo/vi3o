@@ -1,7 +1,6 @@
 from vi3o.utils import SlicedView
 
 from vi3o import Video
-import numpy as np
 
 
 class SyncedVideos(object):

@@ -50,6 +50,11 @@ Then there are a few different ways to install vi3o:
 Whats new
 =========
 
+v0.4.1
+------
+* Switch to setuptools for proper handing of cffi dependency
+* Remove numpy dependency during setup
+
 v0.4.0
 ------
 

@@ -1,7 +1,6 @@
-from distutils.core import setup, Command
+from setuptools import setup, Command
 from vi3o import __version__
 import sys
-import build_mjpg, build_mkv
 
 class PyTestCommand(Command):
     user_options = []
@@ -33,10 +32,9 @@ time at the time of capture is provided as timestamp for each frame.
     author='Hakan Ardo',
     author_email='hakan@debian.org',
     license='MIT',
-    install_requires=['cffi'],
+    setup_requires=["cffi>=1.0.0"],
+    cffi_modules=["build_mjpg.py:ffi", "build_mkv.py:ffi"],
+    install_requires=["cffi>=1.0.0"],
     cmdclass={'test': PyTestCommand},
     tests_require=['pytest'],
-    ext_modules=[build_mjpg.ffi.distutils_extension(),
-                 build_mkv.ffi.distutils_extension()],
-
 )
