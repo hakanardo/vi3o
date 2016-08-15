@@ -20,6 +20,19 @@ class SyncedVideos(object):
                 view(b)
                 view(c)
 
+        It is also possible to access random frames or slices:
+
+        .. code-block:: python
+
+            from vi3o import SyncedVideos
+
+            recoding = SyncedVideos('a.mkv', 'b.mkv', 'c.mkv'):
+            first_part = recoding[:250]
+            last_part = recoding[-250:]
+            half_frame_rate = recoding[::2]
+            backwards = recoding[::-1]
+
+
 
     """
     def __init__(self, *filenames):
@@ -51,6 +64,9 @@ class SyncedVideos(object):
 
     @property
     def systimes(self):
+        """
+            Retunrs a list of systime timestamps without decoding any pixel data.
+        """
         if self._systimes is None:
             self._calc_index_times()
         return self._systimes
@@ -60,6 +76,9 @@ class SyncedVideos(object):
 
     @property
     def indexes(self):
+        """
+            Retunrs a list of frame indexes of the frames used in the synced stream.
+        """
         if self._indexes is None:
             self._calc_index_times()
         return self._indexes

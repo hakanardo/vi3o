@@ -7,6 +7,10 @@ from vi3o.utils import Frame
 
 
 class AxisCam(object):
+    """
+    Loads an mjpg stream directly from an Axis camera with hostname *ip* with the
+    resolution *width*x*height* using the *username* and *password* as credntials.
+    """
     def __init__(self, ip, width=None, height=None, username=None, password=None):
         mjpg_url = 'http://' + ip + '/mjpg/video.mjpg'
         if width is not None:

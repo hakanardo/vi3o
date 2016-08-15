@@ -50,10 +50,13 @@ Then there are a few different ways to install vi3o:
 Whats new
 =========
 
-v0.4.1
+v0.5.0
 ------
+* Added :class:`vi3o.netcam.AxisCam` for reading video directly from Axis camera
+* Add systimes property to Mkv and SyncedVideos to get a list of all system timestamps without decoding the frames.
 * Switch to setuptools for proper handing of cffi dependency
 * Remove numpy dependency during setup
+* Dont try to decode truncated mkv frames
 
 v0.4.0
 ------
@@ -144,6 +147,14 @@ and then once more to show the collected images and restart the collecting:
         view(brighter)
         view(darker)
 
+It is also possible to list all timestamps in a video without decoding the image data using:
+
+.. code-block:: python
+
+    from vi3o import Video
+
+    Video("myfile.mkv").systimes
+
 Modules
 =======
 
@@ -152,9 +163,12 @@ Modules
    :members:
    :imported-members:
 
-
 .. automodule:: vi3o.image
    :members:
+
+.. automodule:: vi3o.netcam
+   :members:
+
 
 Comments and bugs
 =================
