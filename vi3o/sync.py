@@ -114,15 +114,15 @@ class TimedIter(object):
 class TimedVideoIter(object):
     def __init__(self, video):
         self.video = iter(video)
-        self.prev = self.video.next()
+        self.prev = next(self.video)
 
     def next_timed(self, systime):
         if self.prev.systime > systime:
             return self.prev
-        img = self.video.next()
+        img = next(self.video)
         while not (self.prev.systime <= systime <= img.systime):
             self.prev = img
-            img = self.video.next()
+            img = next(self.video)
         if systime - self.prev.systime > img.systime - systime:
             self.prev = img
             return img
