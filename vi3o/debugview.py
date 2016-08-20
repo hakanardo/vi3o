@@ -94,7 +94,7 @@ class DebugViewer(object):
         top = extra // 2
         shape = list(img.shape)
         shape[0]  += extra
-        res = np.zeros(shape, img.dtype)
+        res = np.ones(shape, img.dtype) * 25
         res[top:top+img.shape[0]] = img
         return res
 
@@ -161,6 +161,7 @@ class DebugViewer(object):
                 break
 
     def on_draw(self):
+        pyglet.gl.glClearColor(0.1, 0.1, 0.1, 1.0)
         self.window.clear()
         if self.image:
             self.image.blit(self.offset[0] + self.scroll[0], self.offset[1] + self.scroll[1], 0,
