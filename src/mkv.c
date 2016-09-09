@@ -59,19 +59,20 @@ void mkv_close(struct mkv *s) {
 }
 
 int handle_axis_block(struct mkv *s, uint8_t *data, int len, uint64_t ts) {
-    uint8_t hdr[] = {0x06, 0x05, 0x2e};
+    uint8_t hdr1[] = {0x06, 0x05, 0x2e};
+    uint8_t hdr2[] = {0x06, 0x05, 0x55};
     uint8_t uid[] = {0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
                      0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa};
     uint8_t prd[] = {0x00, 0x0d, 0x0a, 0x00};
     uint8_t tim[] = {0x00, 0x0d, 0x0a, 0x01};
 
-    assert(len > 4 + sizeof(hdr));
+    assert(len > 4 + sizeof(hdr1));
     data += 4;
     len -= 4;
 
     int pos = 0;
-    if (!memcmp(data, hdr, sizeof(hdr))) {
-        pos += sizeof(hdr);
+    if (!memcmp(data, hdr1, sizeof(hdr1)) || !memcmp(data, hdr2, sizeof(hdr2))) {
+        pos += sizeof(hdr1);
         while (pos + sizeof(uid) < len) {
             if (!memcmp(data + pos, uid, sizeof(uid))) {
                 pos += sizeof(uid);
