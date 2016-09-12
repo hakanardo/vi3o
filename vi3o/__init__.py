@@ -18,7 +18,8 @@ def Video(filename, grey=False):
         from vi3o.mjpg import Mjpg
         return Mjpg(filename, grey)
     else:
-        raise NotImplementedError("'%s' has unknown file extension." % filename)
+        from vi3o.opencv import CvVideo
+        return CvVideo(filename, grey)
 
 
 def _get_debug_viewer(name):
