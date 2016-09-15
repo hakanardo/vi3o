@@ -35,7 +35,7 @@ class Mkv(object):
                     cluster_offsets.add(frm.key_frame)
                 self.frame.append([frm.pts, frm.offset, frm.key_frame])
             self.frame.sort()
-            self.systime_offset = iter(self).estimate_systime_offset()
+            self.systime_offset = iter(self).estimate_systime_offset() # FIXME: This makes a second pass over the file parsing it
             lib.mkv_close(m)
 
             with open(idx, 'w') as fd:
