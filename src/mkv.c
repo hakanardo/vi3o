@@ -14,8 +14,13 @@
 static uint64_t get_id(struct mkv *s) {
     int i;
     uint64_t id = 0;
-    for (i=0; (s->cur[0] >> (8-i)) != 1; i++)
+    if (s->cur >= s->data + s->len || !s->cur[0]) {
+        return 0;
+    }
+    for (i=0; (s->cur[0] >> (8-i)) != 1; i++) {
+        if (s->cur + i >= s->data + s->len) return 0;
         id = (id << 8) + s->cur[i];
+    }
     s->cur += i;
     return id;
 }
@@ -106,7 +111,9 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
     while (s->cur < s->data + s->len) {
         unsigned long offset = s->cur - s->data;
         uint64_t id = get_id(s);
+        if (!id) break;
         uint64_t len = get_size(s);
+        if (s->cur + len > s->data + s->len) break;
         switch(id) {
             case 0x18538067: // Segment
             break;
@@ -122,10 +129,6 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
                 s->time_offset = get_uint(s, len);
                 break;
             case 0xa3: // SimpleBlock
-                if (s->cur + len > s->data + s->len) {
-                    memset(frm, 0, sizeof(struct mkv_frame));
-                    return 0;
-                }
                 assert(s->cur[0] == 129);
                 frm->pts = s->time_offset + (s->cur[1]<<8) + s->cur[2];
                 frm->pts *= s->time_scale / 1000;

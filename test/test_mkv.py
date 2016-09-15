@@ -1,5 +1,5 @@
 from py.test import raises
-from vi3o.mkv import Mkv
+from vi3o.mkv import Mkv, lib, ffi
 import os
 
 from vi3o.utils import index_file
@@ -70,3 +70,12 @@ def test_getitem():
         assert video[idx].index == idx
     for i in range(3):
         assert video[idx+1].index == idx+1
+
+def test_bad_file():
+    fn = test_mkv + '_bad'
+    for bad in ["\000", "\001"]:
+        with open(fn, "w") as fd:
+            fd.write(bad)
+        m = lib.mkv_open(fn)
+        frm = ffi.new('struct mkv_frame *')
+        assert lib.mkv_next(m, frm) == 0
