@@ -1,3 +1,4 @@
+import sys
 from py.test import raises
 from vi3o.mkv import Mkv, lib, ffi
 import os
@@ -73,6 +74,8 @@ def test_getitem():
 
 def test_bad_file():
     fn = test_mkv + '_bad'
+    if sys.version_info > (3,):
+        fn = bytes(fn, "utf8")
     for bad in ["\000", "\001"]:
         with open(fn, "w") as fd:
             fd.write(bad)
