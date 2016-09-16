@@ -22,7 +22,7 @@ First, install some dependencies:
 
     .. code-block:: bash
 
-        sudo apt-get install libjpeg62-turbo-dev libavcodec-dev libswscale-dev
+        sudo apt-get install libjpeg62-turbo-dev libavcodec-dev libswscale-dev libffi-dev
 
 Then there are a few different ways to install vi3o:
 
