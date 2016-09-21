@@ -14,8 +14,17 @@
 static uint64_t get_id(struct mkv *s) {
     int i;
     uint64_t id = 0;
-    for (i=0; (s->cur[0] >> (8-i)) != 1; i++)
+    if (s->cur >= s->data + s->len || !s->cur[0]) {
+        s->cur++;
+        return 0;
+    }
+    for (i=0; (s->cur[0] >> (8-i)) != 1; i++) {
+        if (s->cur + i >= s->data + s->len) {
+            s->cur += i;
+            return 0;
+        }
         id = (id << 8) + s->cur[i];
+    }
     s->cur += i;
     return id;
 }
@@ -59,20 +68,19 @@ void mkv_close(struct mkv *s) {
 }
 
 int handle_axis_block(struct mkv *s, uint8_t *data, int len, uint64_t ts) {
-    uint8_t hdr1[] = {0x06, 0x05, 0x2e};
-    uint8_t hdr2[] = {0x06, 0x05, 0x55};
+    uint8_t hdr[] = {0x06, 0x05};
     uint8_t uid[] = {0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa,
                      0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa};
     uint8_t prd[] = {0x00, 0x0d, 0x0a, 0x00};
     uint8_t tim[] = {0x00, 0x0d, 0x0a, 0x01};
 
-    assert(len > 4 + sizeof(hdr1));
+    assert(len > 4 + sizeof(hdr) + 1);
     data += 4;
     len -= 4;
 
     int pos = 0;
-    if (!memcmp(data, hdr1, sizeof(hdr1)) || !memcmp(data, hdr2, sizeof(hdr2))) {
-        pos += sizeof(hdr1);
+    if (!memcmp(data, hdr, sizeof(hdr))) {
+        pos += sizeof(hdr) + 1;
         while (pos + sizeof(uid) < len) {
             if (!memcmp(data + pos, uid, sizeof(uid))) {
                 pos += sizeof(uid);
@@ -101,7 +109,6 @@ int handle_axis_block(struct mkv *s, uint8_t *data, int len, uint64_t ts) {
     return 0;
 }
 
-// FIXME: Add out of buffer checks to get_... functions
 int mkv_next(struct mkv *s, struct mkv_frame *frm) {
     while (s->cur < s->data + s->len) {
         unsigned long offset = s->cur - s->data;
@@ -113,19 +120,18 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
             case 0x1549A966: // Segment Information
             break;
             case 0x2AD7B1: // TimecodeScale
+                if (s->cur + len > s->data + s->len) {s->cur += len; break;}
                 s->time_scale = get_uint(s, len);
                 break;
             case 0x1f43b675: // Cluster
                 s->cluster_offset = offset;
                 break;
             case 0xE7: // Timecode
+                if (s->cur + len > s->data + s->len) {s->cur += len; break;}
                 s->time_offset = get_uint(s, len);
                 break;
             case 0xa3: // SimpleBlock
-                if (s->cur + len > s->data + s->len) {
-                    memset(frm, 0, sizeof(struct mkv_frame));
-                    return 0;
-                }
+                if (s->cur + len > s->data + s->len) {s->cur += len; break;}
                 assert(s->cur[0] == 129);
                 frm->pts = s->time_offset + (s->cur[1]<<8) + s->cur[2];
                 frm->pts *= s->time_scale / 1000;
@@ -151,6 +157,7 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
             case 0xae: // TrackEntry
                 break;
             case 0x63a2: // CodecPrivate
+                if (s->cur + len > s->data + s->len) {s->cur += len; break;}
                 s->codec_private = s->cur;
                 s->codec_private_len = len;
                 s->cur += len;
@@ -158,9 +165,11 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
             case 0xE0: // Video
                 break;
             case 0xb0: // PixelWidth
+                if (s->cur + len > s->data + s->len) {s->cur += len; break;}
                 s->width = get_uint(s, len);
                 break;
             case 0xba: // PixelHeight
+                if (s->cur + len > s->data + s->len) {s->cur += len; break;}
                 s->height = get_uint(s, len);
                 break;
             default:

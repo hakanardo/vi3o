@@ -1,10 +1,10 @@
 vi3o - VIdeo and Image IO
 =========================
 
-Utility for loading/saving/displaying video and images. It gives random
-access to mjpg (in http multipart format) and H264 (in .mkv format) video
-frames. For recordings origination from Axis cameras the camera system
-time at the time of capture is provided as timestamp for each frame.
+Utility for loading/saving/displaying video and images. It gives random access
+to the video frames. For recordings origination from Axis cameras in mjpg (in
+http multipart format) or H264 (in .mkv format) the camera system time at the
+time of capture is provided as a system timestamp for each frame.
 
 To get system timestamps in H.264 recordings "User data" has to be enabled. It
 is found by clicking "Setup", "System Options", "Advanced", "Plain Config" and
@@ -22,7 +22,7 @@ First, install some dependencies:
 
     .. code-block:: bash
 
-        sudo apt-get install libjpeg62-turbo-dev libavcodec-dev libswscale-dev
+        sudo apt-get install libjpeg62-turbo-dev libavcodec-dev libswscale-dev libffi-dev
 
 Then there are a few different ways to install vi3o:
 
@@ -49,6 +49,13 @@ Then there are a few different ways to install vi3o:
 
 Whats new
 =========
+
+v0.5.2
+------
+* Slightly lighter background color behind images in DebugView to distinguish black backgrounds from outside image.
+* Support for reading system timestamps from more recnt Axis cameras.
+* Added a OpenCV fallback to allow unknown video formats to handled as `Video` object even if there are no system timestamps.
+* Fixed a segfault when parsing broken or truncated mkv files.
 
 v0.5.0
 ------

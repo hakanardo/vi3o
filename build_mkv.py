@@ -36,6 +36,7 @@ ffi.cdef("""
 ffi.set_source("vi3o._mkv", '#include "src/decode.h"',
                include_dirs=[mydir],
                sources=["src/mkv.c", "src/decode.c"],
+               # cflags=["-g"],
                libraries=["avcodec", "swscale"])
 
 if __name__ == '__main__':
