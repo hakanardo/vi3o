@@ -7,7 +7,6 @@
 #include <libavcodec/avcodec.h>
 #include <libavutil/avutil.h>
 #include <libswscale/swscale.h>
-#include <libavutil/pixfmt.h>
 
 #include "decode.h"
 
@@ -18,6 +17,9 @@
 #if (LIBAVUTIL_VERSION_MAJOR < 55)
 #define AV_PIX_FMT_RGB24 PIX_FMT_RGB24
 #define AV_PIX_FMT_GRAY8 PIX_FMT_GRAY8
+#define AV_PIX_FMT_YUVJ420P PIX_FMT_YUVJ420P
+#define AV_PIX_FMT_YUVJ422P PIX_FMT_YUVJ422P
+#define AV_PIX_FMT_YUVJ444P PIX_FMT_YUVJ444P
 #endif
 
 struct decode {
