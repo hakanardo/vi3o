@@ -7,6 +7,7 @@
 #include <libavcodec/avcodec.h>
 #include <libavutil/avutil.h>
 #include <libswscale/swscale.h>
+#include <libavutil/pixfmt.h>
 
 #include "decode.h"
 
