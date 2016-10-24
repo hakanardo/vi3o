@@ -37,6 +37,9 @@ struct mjpg {
   unsigned int timestamp_sec;   /**< Timestamp in seconds when this frame were exposed */
   unsigned int timestamp_usec;  /**< Microseconds to add to timestamp_sec for higher precition */
   long start_position_in_file, stop_position_in_file;
+  char hwid[32];
+  char serial[32];
+  char firmware[32];
 };
 
 int mjpg_open(struct mjpg *m, char *name, int type, int dataOrder);

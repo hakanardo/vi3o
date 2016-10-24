@@ -220,13 +220,15 @@ int mjpg_next_head(struct mjpg *m) {
                               (mrk->data[4]<<8)  + (mrk->data[5]);
       m->timestamp_usec = mrk->data[6] * 10000;
     }
-      /*
     if (mrk->data_length>=7 && mrk->data[0]==0x0A && mrk->data[1]==0x00) {
-        printf("Hardware ID: 0x%.2x 0x%.2x\n", mrk->data[2], mrk->data[3]);
-        printf("Firmware Version: %d.%d.%d\n", mrk->data[4], mrk->data[5], mrk->data[6]);
-        printf("Serial: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n", mrk->data[7], mrk->data[8], mrk->data[9], mrk->data[10], mrk->data[11], mrk->data[12]);
+        int hwid = mrk->data[2] << 8 | mrk->data[3];
+        snprintf(m->hwid, sizeof(m->hwid), "%x", hwid);
+        snprintf(m->serial, sizeof(m->serial), "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x", mrk->data[7], mrk->data[8], mrk->data[9], mrk->data[10], mrk->data[11], mrk->data[12]);
+        snprintf(m->firmware, sizeof(m->firmware), "%d.%d.%d", mrk->data[4], mrk->data[5], mrk->data[6]);
+//        printf("Hardware ID: 0x%x\n", hwid);
+//        printf("Firmware Version: %d.%d.%d\n", mrk->data[4], mrk->data[5], mrk->data[6]);
+//        printf("Serial: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n", mrk->data[7], mrk->data[8], mrk->data[9], mrk->data[10], mrk->data[11], mrk->data[12]);
     }
-    */
   }
   return OK;
  }

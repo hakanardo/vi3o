@@ -11,6 +11,9 @@ ffi.cdef("""
             unsigned int timestamp_sec;
             unsigned int timestamp_usec;
             long start_position_in_file, stop_position_in_file;
+            char hwid[32];
+            char serial[32];
+            char firmware[32];
             ...;
         };
         enum {OK, ERROR_FILENOTFOUND, ERROR_ILLEGALARGUMENT, ERROR_FILEFORMAT,
@@ -24,6 +27,7 @@ ffi.cdef("""
         int mjpg_next_data(struct mjpg *m);
         int mjpg_close(struct mjpg *m);
         int mjpg_seek (struct mjpg *m, long offset);
+
          """)
 ffi.set_source("vi3o._mjpg", '#include "src/mjpg.h"',
                include_dirs=[mydir],

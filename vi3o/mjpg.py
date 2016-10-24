@@ -46,6 +46,21 @@ class Mjpg(object):
     def __len__(self):
         return len(self.offset)
 
+    @property
+    def hwid(self):
+        self.myiter.next()
+        return ffi.string(self.myiter.m.hwid)
+
+    @property
+    def serial_number(self):
+        self.myiter.next()
+        return ffi.string(self.myiter.m.serial)
+
+    @property
+    def firmware_version(self):
+        self.myiter.next()
+        return ffi.string(self.myiter.m.firmware)
+
 
 class MjpgIter(object):
     def __init__(self, filename, grey=False):
