@@ -34,11 +34,18 @@ def imsavesc(img, filename, format=None):
     """
     imsave(ptpscale(img), filename, format)
 
-def imread(filename):
+def imread(filename, repair=False):
     """
     Load an image from the file *filename*.
     """
-    return np.array(PIL.Image.open(filename))
+    a =  PIL.Image.open(filename)
+    if not repair:
+        return np.array(a)
+    try:
+        a.load()
+    except IOError as e:
+        print("Warning: IOError while reading '%s': %s" % (filename, e))
+    return np.array(a)
 
 
 def imscale(img, size, interpolation=NEAREST):
