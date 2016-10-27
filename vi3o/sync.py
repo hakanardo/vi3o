@@ -35,8 +35,8 @@ class SyncedVideos(object):
 
 
     """
-    def __init__(self, *filenames):
-        self.videos = [Video(fn) for fn in filenames]
+    def __init__(self, *filenames_or_videos):
+        self.videos = [Video(v) if isinstance(v, str) else v for v in filenames_or_videos]
         start = max([v[0].systime for v in self.videos])
         times = [TimedIter(v.systimes) for v in self.videos]
         frames = [v.next_timed(start) for v in times]
