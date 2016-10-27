@@ -6,6 +6,8 @@ from vi3o import Video
 
 class VideoCat(object):
     def __init__(self, videos):
+        if not videos:
+            raise AttributeError("videos cant't be an empty sequence")
         self.videos = [Video(v) if isinstance(v, str) else v for v in videos]
 
     def __iter__(self):
