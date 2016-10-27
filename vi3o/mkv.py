@@ -46,6 +46,8 @@ class Mkv(object):
     def systimes(self):
         return [float(f[0] + self.systime_offset) / 1000000.0 for f in self.frame]
 
+    def _sliced_systimes(self, range):
+        return [self.systimes[i] for i in range]
 
     def __iter__(self):
         return MkvIter(self.filename, self.systime_offset, self.grey)
@@ -58,7 +60,7 @@ class Mkv(object):
 
     def __getitem__(self, item):
         if isinstance(item, slice):
-            return SlicedView(self, item)
+            return SlicedView(self, item, {'systimes': self._sliced_systimes})
         if (item < 0):
             item += len(self)
         keyindex = item

@@ -62,6 +62,9 @@ def test_systime():
     t = [img.systime for img in video]
     assert t == video.systimes
 
+    cut = video[10:20]
+    assert t[10:20] == cut.systimes
+
 def test_getitem():
     video = Mkv(systime_mkv)
     idx = 31
