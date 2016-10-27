@@ -4,6 +4,7 @@ from vi3o import SyncedVideos
 mydir = os.path.dirname(__file__)
 test_mkvs = [os.path.join(mydir, f) for f in ['a.mkv', 'b.mkv', 'c.mkv']]
 
+
 def test_sync():
     count = 0
     videos = SyncedVideos(*test_mkvs)
