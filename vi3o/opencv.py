@@ -1,7 +1,7 @@
 import cv2
 from vi3o.image import ptpscale
-
 from vi3o.utils import Frame
+import numpy as np
 
 class CvVideo(object):
     def __init__(self, filename, grey=False):
@@ -63,7 +63,8 @@ class CvOut(object):
         self.video.write(img)
 
     def __del__(self):
-        self.video.release()
+        if self.video:
+            self.video.release()
 
 if __name__ == '__main__':
     import numpy as np
