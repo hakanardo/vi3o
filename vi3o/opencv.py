@@ -37,3 +37,28 @@ class CvVideo(object):
 
     def __del__(self):
         self.capture.release()
+
+class CvOut(object):
+    def __init__(self, filename, fps=25):
+        self.filename = filename
+        self.video = None
+        self.fps = fps
+
+    def view(self, img):
+        if self.video is None:
+            height, width, _ = img.shape
+            for codec in [cv2.cv.FOURCC(*"H264"), cv2.cv.FOURCC(*"DIVX"), -1]:
+                self.video = cv2.VideoWriter(self.filename, codec, self.fps, (width, height))
+                if self.video.isOpened():
+                    break
+        self.video.write(img)
+
+    def __del__(self):
+        self.video.release()
+
+if __name__ == '__main__':
+    import numpy as np
+    avi = CvOut("/tmp/t.avi")
+    for i in range(100):
+        avi.view(np.zeros((480, 640, 3), 'B'))
+    del avi
