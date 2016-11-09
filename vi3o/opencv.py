@@ -1,4 +1,6 @@
 import cv2
+from vi3o.image import ptpscale
+
 from vi3o.utils import Frame
 
 class CvVideo(object):
@@ -44,7 +46,14 @@ class CvOut(object):
         self.video = None
         self.fps = fps
 
-    def view(self, img):
+    def view(self, img, scale=False):
+        if img.dtype == 'bool':
+            img = img.astype('B')
+        if scale:
+            img = ptpscale(img)
+        if img.dtype != 'B':
+            img = np.minimum(np.maximum(img, 0), 255).astype('B')
+
         if self.video is None:
             height, width, _ = img.shape
             for codec in [cv2.cv.FOURCC(*"H264"), cv2.cv.FOURCC(*"DIVX"), -1]:
@@ -60,5 +69,5 @@ if __name__ == '__main__':
     import numpy as np
     avi = CvOut("/tmp/t.avi")
     for i in range(100):
-        avi.view(np.zeros((480, 640, 3), 'B'))
+        avi.view(np.zeros((480, 640, 3)))
     del avi
