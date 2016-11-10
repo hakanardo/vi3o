@@ -42,6 +42,9 @@ class Mjpg(object):
     def systimes(self):
         raise NotImplementedError
 
+    def _sliced_systimes(self, range):
+        return [self.systimes[i] for i in range]
+
     def __getitem__(self, item):
         if isinstance(item, slice):
             return SlicedView(self, item, {'systimes': self._sliced_systimes})
