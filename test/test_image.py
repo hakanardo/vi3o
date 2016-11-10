@@ -56,14 +56,35 @@ def test_imgdir():
 
 def test_imrotate():
     img = np.ones([12, 16], 'B') * 255
-    rot = imrotate(img, 1.6, [16, 0], [16*2, 12*2])
-    assert all(rot[:12].flat == 0)
-    assert all(rot[12:, :17].flat == 0)
-    assert all(rot[12:, 17:29].flat == 255)
-    assert all(rot[12:, 29:].flat == 0)
+    # FIXME: Improve test by adding:
+    # img[1, :] = img[10, :] = np.array(range(16)) * 10
+    # img[:, 1] = img[:, 14] = np.array(range(12)) * 10
+    img[0, :] = img[11, :] = 0
+    img[:, 0] = img[:, 15] = 0
 
-    rot = imrotate(img, 1.6, [16, 0], [16*2, 12*2], point=[16, 0])
-    assert all(np.round(rot, 6) == [16, 12])
+    rot = imrotate(img, 1.5708/2, [16, 0], [16*2, 12*2], NEAREST)
+    # imwrite(rot, "/tmp/t.png")
+    # os.system("xzgv /tmp/t.png")
+
+    # pkt = imrotate(img, 1.5708, [16, 0], [16*2, 12*2], point=[16, 0])
+    # assert all(np.round(pkt, 6) == [16, 12])
+
+    cnt1 = cnt2 = 0
+    for y in range(-12, 24):
+        for x in range(-16, 32):
+            rx, ry = imrotate(img, 1.5708/2, [16, 0], [16 * 2, 12 * 2], NEAREST, point=[x, y])
+            rx, ry = int(round(rx)), int(round(ry))
+            if 0 < rx < 16*2 and 0 < ry < 12*2:
+                if 0 <= x < 16 and 0 <= y < 12:
+                    assert rot[ry, rx] == img[y, x]
+                    cnt1 += 1
+                else:
+                    assert rot[ry, rx] < 10
+                    cnt2 += 1
+    assert cnt1 > 10
+    assert cnt2 > 10
+
+    assert all(rot[:12].flat == 0)
 
 def test_imread():
     img = imread(test_jpg)

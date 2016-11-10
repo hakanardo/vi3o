@@ -66,7 +66,8 @@ def imrotate(img, angle, center=None, size=None, interpolation=NEAREST, point=No
     the center of the image. The output image size is specified in *size* as *(width, height)*.
     If *point* is specifed as *(x, y)* it will be taken as a coordinate in the original image
     and be transformed into the corresponing coordinate in te output image and returned
-    instead of the image.
+    instead of the image. Integer coordinates are considered to be at the centers of the
+    pixels.
     """
     if center is None:
         h, w = img.shape[:2]
@@ -83,7 +84,9 @@ def imrotate(img, angle, center=None, size=None, interpolation=NEAREST, point=No
     if point is not None:
         a, b, c, d, e, f, _, _, _ = np.linalg.inv(np.vstack((np.reshape(data, (2, 3)), [0, 0, 1]))).flat
         x, y = point
-        return a*x + b*y + c, d*x + e*y + f
+        x += 0.5
+        y += 0.5
+        return a*x + b*y + c - 0.5, d*x + e*y + f - 0.5
     return np.array(PIL.Image.fromarray(img).transform(size, PIL.Image.AFFINE, data, interpolation))
 
 

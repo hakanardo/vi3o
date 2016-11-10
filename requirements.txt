@@ -1,5 +1,5 @@
 cffi>=1.2.1
-Pillow
+Pillow>=3.4.2
 numpy
 
 
