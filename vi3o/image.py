@@ -36,7 +36,8 @@ def imsavesc(img, filename, format=None):
 
 def imread(filename, repair=False):
     """
-    Load an image from the file *filename*.
+    Load an image from the file *filename*. If *repair* is True, attempts will be made to decode
+    broken frames, in which case partially decoded frames might be returned.
     """
     a =  PIL.Image.open(filename)
     if not repair:
@@ -109,9 +110,6 @@ def imshowsc(img):
     """
     view(img, scale=True, pause=True)
 
-imview = imshow
-imviewsc = imshowsc
-
 class ImageDirOut(object):
     """
     Creates a directory called *dirname* for storing a sequence of images in the format
@@ -145,6 +143,7 @@ class ImageDirOut(object):
         """
         self.view(ptpscale(img))
 
-
-
-
+imview = imshow
+imviewsc = imshowsc
+imload = imread
+imwrite = imsave
