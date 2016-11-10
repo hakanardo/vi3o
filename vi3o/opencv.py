@@ -54,6 +54,8 @@ class CvOut(object):
         if img.dtype != 'B':
             img = np.minimum(np.maximum(img, 0), 255).astype('B')
 
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
         if self.video is None:
             height, width, _ = img.shape
             for codec in [cv2.cv.FOURCC(*"H264"), cv2.cv.FOURCC(*"DIVX"), -1]:
@@ -62,9 +64,16 @@ class CvOut(object):
                     break
         self.video.write(img)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.__del__()
+
     def __del__(self):
         if self.video:
             self.video.release()
+        self.video = None
 
 if __name__ == '__main__':
     import numpy as np
