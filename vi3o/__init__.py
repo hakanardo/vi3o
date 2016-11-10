@@ -6,9 +6,11 @@
 __version_info__ = (0, 5, 2)
 __version__ = '.'.join(str(i) for i in __version_info__)
 
+# FIXME: Turn into a Video base class that documents the interface
+
 def Video(filename, grey=False):
     """
-    Creates a *View* object representing the video in the file *filename*.
+    Creates a *Video* object representing the video in the file *filename*.
     See Overview above.
     """
     if filename.endswith('.mkv'):

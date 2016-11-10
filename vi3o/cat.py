@@ -1,10 +1,21 @@
 from glob import glob
-
 from vi3o.utils import SlicedView
-
 from vi3o import Video
 
 class VideoCat(object):
+    """
+    Concatenates multiple video files into a single video object. The *videos* parameter
+    is a list of videos to be concatenated. It can either be a list of filenames or a list
+    of other *Video* objects. Typical usage:
+
+    .. code-block:: python
+
+        from vi3o import VideoCat
+
+        for img in VideoCat(['part1.mkv', 'part2.mkv']):
+            ...
+
+    """
     def __init__(self, videos):
         if not videos:
             raise AttributeError("VideoCat can't concatinate an empty sequence")
@@ -40,6 +51,11 @@ class VideoCat(object):
 
 
 class VideoGlob(VideoCat):
+    """
+    Subclass of :class:`VideoCat` that is initiated with a :py:func:`glob.glob` wildcard string instead of
+    a list of videos. The wildcard is expanded into a list of filenames that is the sorted before
+    concatenated.
+    """
     def __init__(self, pathname):
         videos = glob(pathname)
         videos.sort()

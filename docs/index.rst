@@ -50,6 +50,16 @@ Then there are a few different ways to install vi3o:
 Whats new
 =========
 
+v0.6.0
+------
+* Added properties :py:attr:`vi3o.mjpg.Mjpg.hwid`, :py:attr:`vi3o.mjpg.Mjpg.serial_number`, :py:attr:`vi3o.mjpg.Mjpg.firmware_version`.
+* Added *repair* option to :py:func:`vi3o.image.imread`.
+* Added :class:`vi3o.VideoCat` and :class:`vi3o.VideoGlob`
+* Fixed buggy *systimes* property on sliced Mkv *Video* objects
+* Support *Video* objects as input argument to :class:`vi3o.SyncedVideos`
+* Added :class:`vi3o.opencv.CvOut`
+* Added :py:func:`vi3o.image.imload` and :py:func:`vi3o.image.imwrite` aliases
+
 v0.5.2
 ------
 * Slightly lighter background color behind images in DebugView to distinguish black backgrounds from outside image.
@@ -74,8 +84,8 @@ v0.4.0
 * Support for showing images of different size one after the other in the debug viewer.
 * Move the generated .idx files to the user .cache dir
 * Regenerate the .idx files if the video is modfied
-* Added :func:`vi3o.image.imrotate`.
-* Added :func:`vi3o.image.imshow`.
+* Added :py:func:`vi3o.image.imrotate`.
+* Added :py:func:`vi3o.image.imshow`.
 * Added support for greyscale mjpg files.
 
 Overview
@@ -137,7 +147,7 @@ This opens a window showing the video which can be controlled using:
     - d - starts pdb debugger
     - s - Toggle enforced rescaling of all images into the 0..255 range
 
-To show multiple images side by side in the window, call :func:`vi3o.flipp` to start colled images
+To show multiple images side by side in the window, call :py:func:`vi3o.flipp` to start colled images
 and then once more to show the collected images and restart the collecting:
 
 .. code-block:: python
@@ -170,12 +180,17 @@ Modules
    :members:
    :imported-members:
 
+.. automodule:: vi3o.mjpg
+   :members:
+
 .. automodule:: vi3o.image
    :members:
 
 .. automodule:: vi3o.netcam
    :members:
 
+.. automodule:: vi3o.opencv
+   :members:
 
 Comments and bugs
 =================

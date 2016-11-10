@@ -32,6 +32,8 @@ class SyncedVideos(object):
             half_frame_rate = recoding[::2]
             backwards = recoding[::-1]
 
+        The input argument *filenames_or_videos* is a list of either file names or *Video* objects.
+
 
 
     """

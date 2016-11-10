@@ -1,3 +1,8 @@
+"""
+:mod:`vi3o.netcam` --- Live camera handling
+===========================================
+"""
+
 import base64
 import urllib2
 from cStringIO import StringIO

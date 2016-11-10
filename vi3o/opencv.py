@@ -1,3 +1,8 @@
+"""
+:mod:`vi3o.opencv` --- Fallbacks on OpenCV functionality
+========================================================
+"""
+
 import cv2
 from vi3o.image import ptpscale
 from vi3o.utils import Frame
@@ -41,6 +46,22 @@ class CvVideo(object):
         self.capture.release()
 
 class CvOut(object):
+    """
+     Video file output using the same interface as the DebugViewer, but encodes the output to a video file
+     such as .avi or .mkv instead. The *filname* specified with be overwritten and the frame rate can be
+     specified using the *fps* argument. The video will be encoded using H264 if available and fall back on
+     DIVX if not. To ensure that the file is proberly closed, this object can be used as a context manager:
+
+     .. code-block:: python
+
+        from vi3o.opencv import CvOut
+
+        with CvOut("result.avi") as avi:
+            avi.view(frame1)
+            avi.view(frame2)
+            ...
+
+    """
     def __init__(self, filename, fps=25):
         self.filename = filename
         self.video = None
