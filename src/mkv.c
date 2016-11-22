@@ -115,7 +115,8 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
         unsigned long offset = s->cur - s->data;
         uint64_t id = get_id(s);
         uint64_t len = get_size(s);
-        printf("id: %lx, len: %ld\n", id, len);
+        printf("id: %lx\n", id);
+        printf("  len: %ld\n", len);
         switch(id) {
             case 0x18538067: // Segment
             break;
