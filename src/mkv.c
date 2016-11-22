@@ -51,7 +51,7 @@ struct mkv *mkv_open(char *filename) {
     struct stat st;
     fstat(fd, &st);
     s->len = st.st_size;
-    printf("len: %d\n", s->len);
+    printf("len: %ld\n", s->len);
     s->data = s->cur = mmap(NULL, s->len, PROT_READ, MAP_SHARED, fd, 0);
     assert(s->data != MAP_FAILED);
     close(fd);
@@ -115,7 +115,7 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
         unsigned long offset = s->cur - s->data;
         uint64_t id = get_id(s);
         uint64_t len = get_size(s);
-        printf("id: %x, len: %d\n", id, len);
+        printf("id: %lx, len: %ld\n", id, len);
         switch(id) {
             case 0x18538067: // Segment
             break;
