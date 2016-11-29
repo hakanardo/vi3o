@@ -1,3 +1,5 @@
+#undef NDEBUG
+
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -47,13 +49,20 @@ static uint64_t get_uint(struct mkv *s, int len) {
 struct mkv *mkv_open(char *filename) {
     struct mkv *s = calloc(sizeof(struct mkv), 1);
     int fd = open(filename, O_RDONLY);
-    assert(fd>0);
+    if (fd <= 0) {
+    	perror("open");
+    	return NULL;
+    }
     struct stat st;
     fstat(fd, &st);
     s->len = st.st_size;
     printf("len: %ld\n", s->len);
     s->data = s->cur = mmap(NULL, s->len, PROT_READ, MAP_SHARED, fd, 0);
-    assert(s->data != MAP_FAILED);
+    if (s->data == MAP_FAILED) {
+    	perror("mmap");
+    	close(fd);
+    	return NULL;
+    }
     close(fd);
     s->munmap_on_close = 1;
     s->codec_private = NULL;
