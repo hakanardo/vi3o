@@ -56,7 +56,6 @@ struct mkv *mkv_open(char *filename) {
     struct stat st;
     fstat(fd, &st);
     s->len = st.st_size;
-    printf("len: %ld\n", s->len);
     s->data = s->cur = mmap(NULL, s->len, PROT_READ, MAP_SHARED, fd, 0);
     if (s->data == MAP_FAILED) {
     	perror("mmap");
@@ -120,14 +119,11 @@ int handle_axis_block(struct mkv *s, uint8_t *data, int len, uint64_t ts) {
 }
 
 int mkv_next(struct mkv *s, struct mkv_frame *frm) {
-    printf("mkv_next %ld < %ld + %ld\n", ((long)s->cur), ((long)s->data),
     s->len);
     while (s->cur < s->data + s->len) {
         unsigned long offset = s->cur - s->data;
         uint64_t id = get_id(s);
         uint64_t len = get_size(s);
-        printf("  id: %lx\n", id);
-        printf("  len: %ld\n", len);
         switch(id) {
             case 0x18538067: // Segment
             break;
