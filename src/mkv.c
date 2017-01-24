@@ -119,7 +119,6 @@ int handle_axis_block(struct mkv *s, uint8_t *data, int len, uint64_t ts) {
 }
 
 int mkv_next(struct mkv *s, struct mkv_frame *frm) {
-    s->len);
     while (s->cur < s->data + s->len) {
         unsigned long offset = s->cur - s->data;
         uint64_t id = get_id(s);
