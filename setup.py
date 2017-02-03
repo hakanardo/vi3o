@@ -1,6 +1,8 @@
 from setuptools import setup, Command
-from vi3o import __version__
 import sys
+
+__version_info__ = (0, 6, 0)
+__version__ = '.'.join(str(i) for i in __version_info__)
 
 class PyTestCommand(Command):
     user_options = []
