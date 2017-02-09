@@ -79,7 +79,7 @@ class CvOut(object):
 
         if self.video is None:
             height, width, _ = img.shape
-            for codec in [cv2.cv.FOURCC(*"H264"), cv2.cv.FOURCC(*"DIVX"), -1]:
+            for codec in [875967048, 1482049860, -1]: #[cv2.cv.FOURCC(*"H264"), cv2.cv.FOURCC(*"DIVX"), -1]:
                 self.video = cv2.VideoWriter(self.filename, codec, self.fps, (width, height))
                 if self.video.isOpened():
                     break
