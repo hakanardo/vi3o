@@ -258,7 +258,7 @@ if __name__ == '__main__':
         exit(-1)
 
     for fn in sys.argv[1:]:
-        if fn.split('.')[-1] in ('mkv', 'mjpg'):
+        if fn.split('.')[-1].lower() in ('mkv', 'mjpg', 'avi', 'mov'):
             for img in Video(sys.argv[1]):
                 view(img)
         else:
