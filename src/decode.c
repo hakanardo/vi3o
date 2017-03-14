@@ -17,6 +17,12 @@
 #if (LIBAVUTIL_VERSION_MAJOR < 55)
 #define AV_PIX_FMT_RGB24 PIX_FMT_RGB24
 #define AV_PIX_FMT_GRAY8 PIX_FMT_GRAY8
+#define AV_PIX_FMT_YUVJ420P PIX_FMT_YUVJ420P
+#define AV_PIX_FMT_YUVJ422P PIX_FMT_YUVJ422P
+#define AV_PIX_FMT_YUVJ444P PIX_FMT_YUVJ444P
+#define AV_PIX_FMT_YUV420P PIX_FMT_YUV420P
+#define AV_PIX_FMT_YUV422P PIX_FMT_YUV422P
+#define AV_PIX_FMT_YUV444P PIX_FMT_YUV444P
 #endif
 
 struct decode {
@@ -26,6 +32,30 @@ struct decode {
     uint64_t next_time;
     struct mkv *m;
 };
+
+
+static void replace_deprecated_codecs(struct decode *p) {
+        switch(p->codec_context->pix_fmt) {
+            case AV_PIX_FMT_YUVJ420P:
+                p->codec_context->pix_fmt = AV_PIX_FMT_YUV420P;
+                p->codec_context->color_range = AVCOL_RANGE_JPEG;
+                break;
+
+            case AV_PIX_FMT_YUVJ422P:
+                p->codec_context->pix_fmt = AV_PIX_FMT_YUV422P;
+                p->codec_context->color_range = AVCOL_RANGE_JPEG;
+                break;
+
+            case AV_PIX_FMT_YUVJ444P:
+                p->codec_context->pix_fmt = AV_PIX_FMT_YUV444P;
+                p->codec_context->color_range = AVCOL_RANGE_JPEG;
+                break;
+
+            default:
+                break;
+        }
+}
+
 
 struct decode *decode_open(struct mkv *m) {
 
@@ -73,6 +103,7 @@ int decode_frame(struct decode *p, struct mkv_frame *frm, uint8_t *img, uint64_t
     int got_picture = 0;
     int len = avcodec_decode_video2(p->codec_context, p->picture,
                                     &got_picture, &pkt);
+    replace_deprecated_codecs(p);
     if (len < 0) return -1;
 
     if (got_picture) {
