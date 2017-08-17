@@ -1,10 +1,11 @@
 from py.test import raises
-from vi3o.mjpg import Mjpg
+from vi3o.mjpg import Mjpg, jpg_info
 from vi3o.utils import index_file
 import os
 
 mydir = os.path.dirname(__file__)
 test_mjpg = os.path.join(mydir, "t.mjpg")
+test_jpg = os.path.join(mydir, "tst.jpg")
 
 def test_iter():
     timestamps = []
@@ -48,5 +49,10 @@ def test_slice():
     assert [img[20,30,1] for img in sub] == [84, 86, 86]
     assert sub[1].timestamp == video[3].timestamp
     assert len(sub) == 3
+
+def test_jpg_info():
+    assert jpg_info(test_jpg) == {'firmware_version': b'6.15.70',
+                                  'hwid': b'72d',
+                                  'serial_number': b'ac:cc:8e:02:b4:36'}
 
 
