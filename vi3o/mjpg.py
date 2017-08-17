@@ -124,3 +124,14 @@ class MjpgIter(object):
     def __next__(self):
         return self.next()
 
+def jpg_info(filename):
+    if sys.version_info > (3,):
+        filename = bytes(filename, "utf8")
+    m = ffi.new("struct mjpg *")
+    r = lib.mjpg_open(m, filename, lib.IMTYPE_GRAY, lib.IMORDER_PLANAR)
+    lib.mjpg_next_head(m)
+    return {'hwid': ffi.string(m.hwid),
+            'serial_number': ffi.string(m.serial),
+            'firmware_version': ffi.string(m.firmware)}
+
+
