@@ -40,11 +40,11 @@ def imread(filename, repair=False):
     broken frames, in which case partially decoded frames might be returned.
     """
     a =  PIL.Image.open(filename)
-    if not repair:
-        return np.array(a)
     try:
         a.load()
     except IOError as e:
+        if not repair:
+            raise
         print("Warning: IOError while reading '%s': %s" % (filename, e))
     return np.array(a)
 

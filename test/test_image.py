@@ -1,9 +1,11 @@
 from vi3o.image import *
 from test.util import TempDir
 import numpy as np
+from py.test import raises
 
 mydir = os.path.dirname(__file__)
 test_jpg = os.path.join(mydir, "00000000.jpg")
+test_jpg2 = os.path.join(mydir, "img00012680.jpg")
 
 
 def test_save_load():
@@ -88,4 +90,10 @@ def test_imrotate():
 
 def test_imread():
     img = imread(test_jpg)
+    assert isinstance(img, np.ndarray)
     assert img.shape == (288, 360)
+    with raises(IOError):
+        img = imread(test_jpg2)
+    img = imread(test_jpg2, True)
+    assert isinstance(img, np.ndarray)
+    assert img.shape == (240, 320, 3)
