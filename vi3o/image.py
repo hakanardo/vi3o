@@ -61,6 +61,9 @@ def imscale(img, size, interpolation=NEAREST):
     return np.array(PIL.Image.fromarray(img).resize(size, interpolation))
 
 def imrotate(img, angle, center=None, size=None, interpolation=NEAREST, point=None):
+    return imrotate_and_scale(img, angle, 1.0, center, size, interpolation, point)
+
+def imrotate_and_scale(img, angle, scale, center=None, size=None, interpolation=NEAREST, point=None):
     """
     Rotate the image, *img*, *angle* radians around the point *center* which defaults to
     the center of the image. The output image size is specified in *size* as *(width, height)*.
@@ -81,6 +84,9 @@ def imrotate(img, angle, center=None, size=None, interpolation=NEAREST, point=No
     s, c = np.sin(angle),  np.cos(angle)
     data = [c, -s, -c*cx + s*cy + center[0],
             s,  c, -s*cx - c*cy + center[1]]
+    data = [scale*d for d in data]
+    data[2] += (1-scale) * center[0]
+    data[5] += (1-scale) * center[1]
     if point is not None:
         a, b, c, d, e, f, _, _, _ = np.linalg.inv(np.vstack((np.reshape(data, (2, 3)), [0, 0, 1]))).flat
         x, y = point
@@ -88,7 +94,6 @@ def imrotate(img, angle, center=None, size=None, interpolation=NEAREST, point=No
         y += 0.5
         return a*x + b*y + c - 0.5, d*x + e*y + f - 0.5
     return np.array(PIL.Image.fromarray(img).transform(size, PIL.Image.AFFINE, data, interpolation))
-
 
 def ptpscale(img):
     """
