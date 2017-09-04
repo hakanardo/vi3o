@@ -34,6 +34,8 @@ def imsavesc(img, filename, format=None):
     """
     imsave(ptpscale(img), filename, format)
 
+class Silent: pass
+
 def imread(filename, repair=False):
     """
     Load an image from the file *filename*. If *repair* is True, attempts will be made to decode
@@ -45,7 +47,8 @@ def imread(filename, repair=False):
     except IOError as e:
         if not repair:
             raise
-        print("Warning: IOError while reading '%s': %s" % (filename, e))
+        if repair is not Silent:
+            print("Warning: IOError while reading '%s': %s" % (filename, e))
     return np.array(a)
 
 

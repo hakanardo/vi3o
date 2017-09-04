@@ -168,8 +168,8 @@ class DebugViewer(object):
                             self.scaled_size[0], self.scaled_size[1])
             x, y = DebugViewer.mouse_x, DebugViewer.mouse_y
             if 0 <= x < self.intensity.shape[1] and 0 <= y < self.intensity.shape[0]:
-                ii = self.intensity[y, x]
-                if not self.color_mask[x] and len(ii.shape) > 0:
+                ii = self.intensity[int(y), int(x)]
+                if not self.color_mask[int(x)] and len(ii.shape) > 0:
                     ii = ii[0]
                 self.label.text = 'x: %4d   y: %4d   I: %s' % (x, y, ii)
             else:
