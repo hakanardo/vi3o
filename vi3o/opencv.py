@@ -75,7 +75,10 @@ class CvOut(object):
         if img.dtype != 'B':
             img = np.minimum(np.maximum(img, 0), 255).astype('B')
 
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        if len(img.shape) == 2:
+            img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+        else:
+            img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
         if self.video is None:
             height, width, _ = img.shape
