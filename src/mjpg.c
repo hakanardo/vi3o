@@ -18,6 +18,9 @@
 #  define MAX_STR_LEN 5
 #endif
 
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
 void skip_past_str( struct jpeg_decompress_struct *dec, char *str ) {
   unsigned char *p;
   unsigned int len=strlen(str);
@@ -352,7 +355,8 @@ int mjpg_next_data(struct mjpg *m) {
             y+=m->cameraDecomp.comp_info[0].width_in_blocks*DCTSIZE;
           }
         } else {
-          for (i=0; i<2*DCTSIZE; i++) {
+          int rows = MIN(2*DCTSIZE, m->cameraDecomp.output_height - m->cameraDecomp.output_scanline + 2*DCTSIZE);
+          for (i=0; i<rows; i++) {
             memcpy(y,m->cameraBuffer[0][i],
                    m->cameraDecomp.comp_info[0].width_in_blocks*DCTSIZE); 
             y+=m->cameraDecomp.comp_info[0].width_in_blocks*DCTSIZE;
