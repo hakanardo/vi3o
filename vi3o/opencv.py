@@ -6,22 +6,29 @@
 import cv2
 from vi3o.image import ptpscale
 from vi3o.utils import Frame
+import os
 import numpy as np
+
+for attr in ('CAP_PROP_FRAME_COUNT', 'CAP_PROP_POS_FRAMES', 'CAP_PROP_POS_MSEC'):
+    if not hasattr(cv2, attr):
+        setattr(cv2, attr, getattr(cv2.cv, 'CV_' + attr))
 
 class CvVideo(object):
     def __init__(self, filename, grey=False):
+        if not os.path.exists(filename):
+            raise IOError("File not found: '%s'" % filename)
         self.grey = grey
         self.capture = cv2.VideoCapture(filename)
 
     def __len__(self):
-        return int(self.capture.get(cv2.cv.CV_CAP_PROP_FRAME_COUNT))
+        return int(self.capture.get(cv2.CAP_PROP_FRAME_COUNT))
 
     def __next__(self):
-        return self.next(self)
+        return self.next()
 
     def next(self):
-        index = int(self.capture.get(cv2.cv.CV_CAP_PROP_POS_FRAMES))
-        timestamp = self.capture.get(cv2.cv.CV_CAP_PROP_POS_MSEC) / 1000.0
+        index = int(self.capture.get(cv2.CAP_PROP_POS_FRAMES))
+        timestamp = self.capture.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
         ret, frame = self.capture.read()
         if not ret:
             raise StopIteration
@@ -39,7 +46,7 @@ class CvVideo(object):
         return self
 
     def __getitem__(self, item):
-        self.capture.set(cv2.cv.CV_CAP_PROP_POS_FRAMES, item)
+        self.capture.set(cv2.CAP_PROP_POS_FRAMES, item)
         return self.next()
 
     def __del__(self):
