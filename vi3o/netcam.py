@@ -24,7 +24,7 @@ class AxisCam(object):
     Loads an mjpg stream directly from an Axis camera with hostname *ip* with the
     resolution *width*x*height* using the *username* and *password* as credntials.
     """
-    def __init__(self, ip, width=None, height=None, username=None, password=None, no_proxy=False):
+    def __init__(self, ip, width=None, height=None, username=None, password=None, no_proxy=False, **kwargs):
 
 
         if no_proxy:
@@ -32,6 +32,8 @@ class AxisCam(object):
         mjpg_url = 'http://' + ip + '/mjpg/video.mjpg'
         if width is not None:
             mjpg_url += '?resolution=%dx%d' % (width, height)
+        for k, v in kwargs.items():
+            mjpg_url += '&%s=%s' % (k, v)
 
         r = requests.get(mjpg_url, auth=HTTPDigestAuth(username, password), stream=True)
         r.raise_for_status()
