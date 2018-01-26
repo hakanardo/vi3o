@@ -19,6 +19,11 @@
 #define AV_PIX_FMT_GRAY8 PIX_FMT_GRAY8
 #endif
 
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(55,28,1)
+#define av_frame_alloc  avcodec_alloc_frame
+#endif
+
+
 struct decode {
     AVCodec* codec;                                                                        /* the AVCodec* which represents the H264 decoder */
     AVCodecContext* codec_context;                                                         /* the context; keeps generic state */
@@ -50,8 +55,8 @@ struct decode *decode_open(struct mkv *m) {
     p->codec_context->extradata_size = m->codec_private_len;
     int rc = avcodec_open2(p->codec_context, p->codec, NULL);
     assert(rc>=0);
-    //p->picture = av_frame_alloc();
-    p->picture = avcodec_alloc_frame();
+    p->picture = av_frame_alloc();
+//    p->picture = avcodec_alloc_frame();
 
     return p;
 }
