@@ -50,6 +50,13 @@ Then there are a few different ways to install vi3o:
 Whats new
 =========
 
+v0.6.1
+------
+* Setup now depends on numpy
+* No longer depends on cv2.cv.FOURCC, which has been droppen in recent opencv version
+* Recognize upper case filename extntions
+* Select betwen av_frame_alloc and avcodec_alloc_frame based on libav version
+
 v0.6.0
 ------
 * Added properties :py:attr:`vi3o.mjpg.Mjpg.hwid`, :py:attr:`vi3o.mjpg.Mjpg.serial_number`, :py:attr:`vi3o.mjpg.Mjpg.firmware_version`.
