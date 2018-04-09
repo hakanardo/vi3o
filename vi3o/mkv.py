@@ -144,3 +144,7 @@ class MkvIter(object):
 
     def __next__(self):
         return self.next()
+
+class MkvStream(object):
+    def __init__(self, data):
+        self.data = data

@@ -29,6 +29,7 @@ class AxisCam(object):
 
         if no_proxy:
             os.environ['NO_PROXY'] = ip
+            os.environ['no_proxy'] = ip
         mjpg_url = 'http://' + ip + '/mjpg/video.mjpg'
         if width is not None:
             mjpg_url += '?resolution=%dx%d' % (width, height)
