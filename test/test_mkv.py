@@ -1,7 +1,10 @@
 import sys
+from tempfile import NamedTemporaryFile
+
 from py.test import raises
 from vi3o.mkv import Mkv, lib, ffi
 import os
+import pickle
 
 from vi3o.utils import index_file
 
@@ -85,3 +88,20 @@ def test_bad_file():
         m = lib.mkv_open(fn)
         frm = ffi.new('struct mkv_frame *')
         assert lib.mkv_next(m, frm) == 0
+
+def test_pickle():
+    video = Mkv(systime_mkv)
+    t8 = video[8].systime
+    assert t8 > 10000
+    sub = video[6::2]
+    assert sub[1].systime == t8
+
+    assert video.myiter is not None
+    with NamedTemporaryFile() as tmp:
+        with open(tmp.name, "wb") as fd:
+            pickle.dump(sub, fd)
+        loaded = pickle.load(open(tmp.name, "rb"))
+
+    assert loaded[1].systime == t8
+
+

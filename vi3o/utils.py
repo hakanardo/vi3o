@@ -24,6 +24,16 @@ class SlicedView(object):
             return self.properties[item](self.range)
         return getattr(self.parent, item)
 
+    def __getstate__(self):
+        state = dict(self.__dict__)
+        del state['properties'] # FIXME
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.properties = ()
+
+
 cache_dir = os.path.join(os.path.expanduser('~'), ".cache", "vi3o")
 
 def index_file(fn, extradata=None):
