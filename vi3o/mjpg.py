@@ -128,6 +128,11 @@ class MjpgIter(object):
         lib.mjpg_close(self.m)
 
 def jpg_info(filename):
+    """
+    Reads a single jpeg image from the file *filename* and extracts the Axis user data header.
+    The information it contains is returned as a dict with the keys "hwid", "serial_numer" and
+    "firmware_version".
+    """
     if sys.version_info > (3,):
         filename = bytes(filename, "utf8")
     m = ffi.new("struct mjpg *")

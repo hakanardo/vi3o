@@ -23,6 +23,9 @@ class AxisCam(object):
     """
     Loads an mjpg stream directly from an Axis camera with hostname *ip* with the
     resolution *width*x*height* using the *username* and *password* as credntials.
+    If *no_proxy* is True, the proxy settings from the environment will be ignored
+    and any other keyword parameter will be passed on to the camera as a VAPIX
+    parameter.
     """
     def __init__(self, ip, width=None, height=None, username=None, password=None, no_proxy=False, **kwargs):
 

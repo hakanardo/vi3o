@@ -50,6 +50,21 @@ Then there are a few different ways to install vi3o:
 Whats new
 =========
 
+v0.7.0
+------
+* Added :py:func:`vi3o.mjpg.jpg_info` for reading Axis user data from single images.
+* Added :py:func:`vi3o.image.imrotate_and_scale`
+* :py:func:`vi3o.image.imread` now raises IoError when failing to load an image with repair=False
+* :py:func:`vi3o.image.imread` will now by default warn if it tried to load a broken image
+* :class:`vi3o.opencv.CvVideo` now supports greyscale video
+* :class:`vi3o.netcam.AxisCam` now uses digest authentication instead of basic
+* Added a parameter to :class:`vi3o.netcam.AxisCam` to make it ignore proxy setting
+* Added support for general vapix parameters in :class:`vi3o.netcam.AxisCam`
+* Support for avi and mp4 files in :mod:`vi3o.debugview`
+* Improved backwards compatibility with opencv
+* Made class:`vi3o.mkv.Mkv` objects picklable
+
+
 v0.6.1
 ------
 * Setup now depends on numpy
