@@ -1,3 +1,8 @@
+"""
+:mod:`vi3o.mjpg` --- Motion JPEG video loading
+==============================================
+"""
+
 import json
 import os, sys
 from vi3o.utils import SlicedView, index_file, Frame
