@@ -14,7 +14,6 @@ class Mkv(object):
         self.grey = grey
         open(filename).close()
         self._myiter = None
-        self._index = None
         self.systime_offset = 0
 
         idx = index_file(self.filename)
@@ -80,6 +79,16 @@ class Mkv(object):
     def __len__(self):
         return len(self.frame)
 
+    def __getstate__(self):
+        state = dict(self.__dict__)
+        del state['_myiter']
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._myiter = None
+
+
 class DecodeError(Exception):
     pass
 
@@ -144,6 +153,10 @@ class MkvIter(object):
 
     def __next__(self):
         return self.next()
+
+    def __getstate__(self):
+        raise NotImplementedError("Cant pickle MkvIter objects")
+
 
 class MkvStream(object):
     def __init__(self, data):
