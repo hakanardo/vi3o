@@ -2,6 +2,8 @@ import json
 import os, sys
 from vi3o._mkv import ffi, lib
 from vi3o.utils import SlicedView, index_file, Frame
+from vi3o._mjpg import lib as mjpg_lib
+from vi3o._mjpg import ffi as mjpg_ffi
 
 from threading import Lock
 decode_open_lock = Lock()
@@ -92,6 +94,41 @@ class Mkv(object):
 class DecodeError(Exception):
     pass
 
+class H264Decoder(object):
+    def open(self, m):
+        with decode_open_lock:
+            self.p = lib.decode_open(m)
+
+    def __del__(self):
+        with decode_open_lock:
+            self.p = lib.decode_close(self.p)
+
+    def decode_frame(self, frm, pixels, pts, grey):
+        return lib.decode_frame(self.p, frm, pixels, pts, grey)
+
+class MjpgDecoder(object):
+    def open(self, m):
+        pass
+
+    def decode_frame(self, frm, pixels, pts, grey):
+        m = mjpg_ffi.new("struct mjpg *")
+        if grey:
+            r = mjpg_lib.mjpg_open_buffer(m, frm.data, frm.len, mjpg_lib.IMTYPE_GRAY, mjpg_lib.IMORDER_INTERLEAVED)
+        else:
+            r = mjpg_lib.mjpg_open_buffer(m, frm.data, frm.len, mjpg_lib.IMTYPE_RGB, mjpg_lib.IMORDER_INTERLEAVED)
+        if r != mjpg_lib.OK:
+            raise IOError("Failed to decode frame")
+
+        if mjpg_lib.mjpg_next_head(m) != mjpg_lib.OK:
+            return 0
+        m.pixels = mjpg_ffi.cast('unsigned char *', pixels)
+        if mjpg_lib.mjpg_next_data(m) != mjpg_lib.OK:
+            return 0
+        pts[0] = m.timestamp_sec * 1000000 + m.timestamp_usec
+        mjpg_lib.mjpg_close(m)
+
+        return 1
+
 class MkvIter(object):
     def __init__(self, filename, systime_offset, grey=False):
         self.m = lib.mkv_open(filename)
@@ -101,8 +138,12 @@ class MkvIter(object):
         lib.mkv_next(self.m, self.frm)
         assert self.m.codec_private
         assert self.m.codec_private_len > 0
-        with decode_open_lock:
-            self.p = lib.decode_open(self.m)
+        if ffi.string(self.m.codec_id) == b'V_MS/VFW/FOURCC':
+            self.decoder = MjpgDecoder()
+        else:
+            self.decoder = H264Decoder()
+
+        self.decoder.open(self.m)
         self.fcnt = 0
         self.pts = ffi.new('uint64_t *')
         if grey:
@@ -113,8 +154,7 @@ class MkvIter(object):
             raise IOError("Failed to open: " + filename)
 
     def __del__(self):
-        with decode_open_lock:
-            self.p = lib.decode_close(self.p)
+        del self.decoder
         lib.mkv_close(self.m)
 
     def estimate_systime_offset(self):
@@ -135,7 +175,7 @@ class MkvIter(object):
         pixels = ffi.cast('uint8_t *', img.__array_interface__['data'][0])
 
         while True:
-            r = lib.decode_frame(self.p, self.frm, pixels, self.pts, self.channels == 1)
+            r = self.decoder.decode_frame(self.frm, pixels, self.pts, self.channels == 1)
             if r >= 0:
                 if lib.mkv_next(self.m, self.frm) == 0 and r == 0:
                     raise StopIteration

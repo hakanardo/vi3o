@@ -43,6 +43,7 @@ struct mjpg {
 };
 
 int mjpg_open(struct mjpg *m, char *name, int type, int dataOrder);
+int mjpg_open_buffer(struct mjpg *m, uint8_t *buf, int len, int type, int dataOrder);
 int mjpg_next_head(struct mjpg *m);
 int mjpg_next_data(struct mjpg *m);
 int mjpg_close(struct mjpg *m);

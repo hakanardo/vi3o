@@ -53,6 +53,12 @@ def test_slice():
 def test_jpg_info():
     assert jpg_info(test_jpg) == {'firmware_version': b'6.15.70',
                                   'hwid': b'72d',
-                                  'serial_number': b'ac:cc:8e:02:b4:36'}
+                                  'serial_number': b'ac:cc:8e:02:b4:36',
+                                  'timestamp': 1502961384.44}
 
+def test_grey():
+    from vi3o import view
+    video = Mjpg(test_mjpg, grey=True)
+    for img in video:
+        assert img.shape == (120, 160)
 

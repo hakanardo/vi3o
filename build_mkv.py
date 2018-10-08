@@ -11,6 +11,7 @@ ffi.cdef("""
             int64_t systime_offset_sum, systime_offset_count, systime_offset;
             uint8_t *codec_private;
             size_t codec_private_len;
+            char *codec_id;
             ...;
         };
         struct mkv_frame {

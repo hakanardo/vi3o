@@ -92,7 +92,7 @@ class MjpgIter(object):
         self.m = ffi.new("struct mjpg *")
         self.fcnt = 0
         if grey:
-            r = lib.mjpg_open(self.m, filename, lib.IMTYPE_GRAY, lib.IMORDER_PLANAR)
+            r = lib.mjpg_open(self.m, filename, lib.IMTYPE_GRAY, lib.IMORDER_INTERLEAVED)
             self.channels = 1
         else:
             r = lib.mjpg_open(self.m, filename, lib.IMTYPE_RGB, lib.IMORDER_INTERLEAVED)
@@ -145,7 +145,8 @@ def jpg_info(filename):
     lib.mjpg_next_head(m)
     res = {'hwid': ffi.string(m.hwid),
            'serial_number': ffi.string(m.serial),
-           'firmware_version': ffi.string(m.firmware)}
+           'firmware_version': ffi.string(m.firmware),
+           'timestamp': m.timestamp_sec + m.timestamp_usec / 1000000.0}
     lib.mjpg_close(m)
     return res
 

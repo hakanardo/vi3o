@@ -57,6 +57,7 @@ struct mkv *mkv_open(char *filename) {
     s->munmap_on_close = 1;
     s->codec_private = NULL;
     s->codec_private_len = 0;
+    s->codec_id = NULL;
     return s;
 }
 
@@ -64,6 +65,7 @@ void mkv_close(struct mkv *s) {
     if (s->munmap_on_close) {
         munmap(s->data, s->len);
     }
+    if (s->codec_id) free(s->codec_id);
     free(s);
 }
 
@@ -160,6 +162,10 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
                 if (s->cur + len > s->data + s->len) {s->cur += len; break;}
                 s->codec_private = s->cur;
                 s->codec_private_len = len;
+                s->cur += len;
+                break;
+            case 0x86: // CodecId
+                s->codec_id = strndup(s->cur, len);
                 s->cur += len;
                 break;
             case 0xE0: // Video

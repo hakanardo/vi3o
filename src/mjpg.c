@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <setjmp.h>
@@ -104,6 +105,17 @@ int mjpg_open(struct mjpg *m, char *name, int type, int dataOrder) {
   FILE *fd;
 
   fd=fopen(name,"rb");
+  if (!fd) {
+    return ERROR_FILENOTFOUND;
+  }
+
+  return mjpg_open_fd(m,fd,type,dataOrder);
+}
+
+int mjpg_open_buffer(struct mjpg *m, uint8_t *buf, int len, int type, int dataOrder) {
+  FILE *fd;
+
+  fd=fmemopen(buf, len, "rb");
   if (!fd) {
     return ERROR_FILENOTFOUND;
   }
@@ -299,9 +311,8 @@ int mjpg_next_data(struct mjpg *m) {
       return 0;
     }
     m->dataOrder=IMORDER_PLANAR_SUBXY;
-    
+
     while (m->cameraDecomp.output_scanline < m->cameraDecomp.output_height) {
-    
       if (jpeg_read_raw_data(&m->cameraDecomp, m->cameraBuffer, row_stride)!=row_stride) {
         d_printf("MJPG: jpeg_read_raw_data failed");
         return ERROR_FILEFORMAT;

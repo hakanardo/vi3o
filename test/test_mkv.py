@@ -2,6 +2,7 @@ import sys
 from tempfile import NamedTemporaryFile
 
 from py.test import raises
+
 from vi3o.mkv import Mkv, lib, ffi
 import os
 import pickle
@@ -11,6 +12,7 @@ from vi3o.utils import index_file
 mydir = os.path.dirname(__file__)
 test_mkv = os.path.join(mydir, "t.mkv")
 systime_mkv = os.path.join(mydir, "systime.mkv")
+mjpg_codec_mkv = os.path.join(mydir, "test_mjpg_codec.mkv")
 
 def test_iter():
     timestamps = []
@@ -104,4 +106,18 @@ def test_pickle():
 
     assert loaded[1].systime == t8
 
+def test_mjpg_codec():
+    systimes = []
+    video = Mkv(mjpg_codec_mkv)
+    for img in video:
+        systimes.append(img.systime)
+        assert img.shape == (300, 480, 3)
+    assert systimes == [1539001990.82, 1539001991.82, 1539001992.82]
 
+def test_mjpg_codec_grey():
+    systimes = []
+    video = Mkv(mjpg_codec_mkv, grey=True)
+    for img in video:
+        systimes.append(img.systime)
+        assert img.shape == (300, 480)
+    assert systimes == [1539001990.82, 1539001991.82, 1539001992.82]

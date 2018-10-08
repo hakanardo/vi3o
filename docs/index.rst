@@ -50,6 +50,12 @@ Then there are a few different ways to install vi3o:
 Whats new
 =========
 
+v0.7.1
+------
+* Support for .mkv files with mjpg codec. Timestamps are in this case red from jpg-headers
+  so there is no need for user-data packages in the mkv stream.
+* Passing grey=True to :class:`vi3o.mjpg.Mjpg` no longer results in segfault.
+
 v0.7.0
 ------
 * Added :py:func:`vi3o.mjpg.jpg_info` for reading Axis user data from single images.
