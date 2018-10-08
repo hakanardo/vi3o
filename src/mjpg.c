@@ -117,6 +117,7 @@ int mjpg_open_buffer(struct mjpg *m, uint8_t *buf, int len, int type, int dataOr
 
   fd=fmemopen(buf, len, "rb");
   if (!fd) {
+    perror("fmemopen");
     return ERROR_FILENOTFOUND;
   }
 
