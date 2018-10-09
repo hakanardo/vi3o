@@ -115,7 +115,7 @@ int mjpg_open(struct mjpg *m, char *name, int type, int dataOrder) {
 int mjpg_open_buffer(struct mjpg *m, uint8_t *buf, int len, int type, int dataOrder) {
   FILE *fd;
 
-  fd=fmemopen(buf, len, "r");
+  fd=fmemopen(buf, len, "rb");
   if (!fd) {
     fprintf(stderr, "buf=0x%x, len=%d\n", buf, len);
     perror("fmemopen");

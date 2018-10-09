@@ -111,6 +111,8 @@ class MjpgDecoder(object):
         pass
 
     def decode_frame(self, frm, pixels, pts, grey):
+        if frm.len == 0:
+            return 0
         m = mjpg_ffi.new("struct mjpg *")
         if grey:
             r = mjpg_lib.mjpg_open_buffer(m, frm.data, frm.len, mjpg_lib.IMTYPE_GRAY, mjpg_lib.IMORDER_INTERLEAVED)
