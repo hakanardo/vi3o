@@ -112,6 +112,7 @@ int handle_axis_block(struct mkv *s, uint8_t *data, int len, uint64_t ts) {
 }
 
 int mkv_next(struct mkv *s, struct mkv_frame *frm) {
+    fprintf(stderr, "mkv_next(curr=0x%x, len=%d);\n", s->cur, s->len);
     while (s->cur < s->data + s->len) {
         unsigned long offset = s->cur - s->data;
         uint64_t id = get_id(s);
@@ -147,6 +148,7 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
                 frm->len = len - 4;
                 frm->key_frame = (s->cur[3]&0x80)>>7;
                 s->cur += len;
+                fprintf(stderr, "  frm->data=0x%x, len=0x%x\n", frm->data, frm->len);
                 if (!handle_axis_block(s, frm->data, frm->len, frm->pts)) {
                     return 1;
                 }
