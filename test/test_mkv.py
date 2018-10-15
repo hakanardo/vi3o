@@ -112,6 +112,9 @@ def test_mjpg_codec():
     for img in video:
         systimes.append(img.systime)
         assert img.shape == (300, 480, 3)
+    assert video[0].systime == 1539001990.82
+    assert video[2].systime == 1539001992.82
+    assert video[1].systime == 1539001991.82
     assert systimes == [1539001990.82, 1539001991.82, 1539001992.82]
 
 def test_mjpg_codec_grey():

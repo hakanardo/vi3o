@@ -18,13 +18,17 @@ class Mkv(object):
         self._myiter = None
         self.systime_offset = 0
 
+        need_index = True
         idx = index_file(self.filename)
         if os.path.exists(idx):
             index = json.load(open(idx))
-            assert index['version'] == 2
-            self.frame = index['frame']
-            self.systime_offset = index['systime_offset']
-        else:
+            if index['version'] == 3:
+                self.frame = index['frame']
+                self.systime_offset = index['systime_offset']
+                self.mjpg_mode = index['mjpg_mode']
+                need_index = False
+
+        if need_index:
             self.frame = []
             m = lib.mkv_open(self.filename)
             frm = ffi.new('struct mkv_frame *')
@@ -37,14 +41,18 @@ class Mkv(object):
                 self.frame.append([frm.pts, frm.offset, frm.key_frame])
             self.frame.sort()
             self.systime_offset = iter(self).estimate_systime_offset() # FIXME: This makes a second pass over the file parsing it
+            self.mjpg_mode = (ffi.string(m.codec_id) == b'V_MS/VFW/FOURCC')
             lib.mkv_close(m)
 
             with open(idx, 'w') as fd:
                 json.dump({'frame': self.frame,
                            'systime_offset': self.systime_offset,
-                           'version': 2}, fd)
+                           'mjpg_mode': self.mjpg_mode,
+                           'version': 3}, fd)
     @property
     def systimes(self):
+        if self.mjpg_mode:
+            raise NotImplementedError
         return [float(f[0] + self.systime_offset) / 1000000.0 for f in self.frame]
 
     def _sliced_systimes(self, range):
@@ -71,8 +79,9 @@ class Mkv(object):
         pts = self.frame[item][0]
         if keyindex > self.myiter.fcnt or item < self.myiter.fcnt:
             lib.mkv_seek(self.myiter.m, self.frame[keyindex][1])
+            lib.mkv_next(self.myiter.m, self.myiter.frm)
         for img in self.myiter:
-            if img.pts == pts:
+            if img.pts == pts or self.mjpg_mode:
                 self.myiter.fcnt = item + 1
                 img.index = item
                 return img
