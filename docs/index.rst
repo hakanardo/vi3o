@@ -50,6 +50,10 @@ Then there are a few different ways to install vi3o:
 Whats new
 =========
 
+v0.7.3
+------
+* Support for random access in mjpeg coded .mkv files.
+
 v0.7.2
 ------
 * Support for .mkv files with mjpg codec. Timestamps are in this case red from jpg-headers
