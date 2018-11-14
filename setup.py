@@ -1,6 +1,11 @@
 from setuptools import setup, Command
-from vi3o import __version__
 import sys
+import os
+
+# Read the version but avoid importing the __init__.py since
+# we might not have all dependencies installed
+with open(os.path.join(os.path.dirname(__file__), "vi3o", "version.py")) as fp:
+    exec(fp.read())
 
 class PyTestCommand(Command):
     user_options = []
