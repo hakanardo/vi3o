@@ -1,4 +1,5 @@
-from setuptools import setup, Command
+from setuptools import setup
+from setuptools.command.test import test as TestCommand
 import sys
 import os
 
@@ -7,16 +8,13 @@ import os
 with open(os.path.join(os.path.dirname(__file__), "vi3o", "version.py")) as fp:
     exec(fp.read())
 
-class PyTestCommand(Command):
+class PyTestCommand(TestCommand):
     user_options = []
-
-    def initialize_options(self):
-        pass
 
     def finalize_options(self):
         pass
 
-    def run(self):
+    def run_tests(self):
         import pytest
         errno = pytest.main()
         sys.exit(errno)
@@ -41,5 +39,5 @@ time at the time of capture is provided as timestamp for each frame.
     cffi_modules=["build_mjpg.py:ffi", "build_mkv.py:ffi"],
     install_requires=["cffi>=1.0.0", "numpy>=1.7.1"],
     cmdclass={'test': PyTestCommand},
-    tests_require=['pytest'],
+    tests_require=['pytest', 'pillow'],
 )
