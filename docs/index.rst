@@ -50,6 +50,13 @@ Then there are a few different ways to install vi3o:
 Whats new
 =========
 
+v0.7.4
+------
+* Remove numpy as dependency to setup.py
+* Fixed dependencies for setuptools test command
+* Removed deprecated pixel format warning
+* Added script to run unit tests localy in docker
+
 v0.7.3
 ------
 * Support for random access in mjpeg coded .mkv files.

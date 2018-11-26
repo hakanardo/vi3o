@@ -6,9 +6,9 @@ if [ ! -z "`git diff`" ]; then
 fi
 git tag v`PYTHONPATH=. python -c 'import vi3o; print vi3o.__version__' 2>/dev/null | tail -1` || exit
 git checkout stable || exit
-git pull
+tsocks git pull
 git merge master || exit
-git push 
-git push --tags
+tsocks git push
+tsocks git push --tags
 git checkout master
-git push 
+tsocks git push
