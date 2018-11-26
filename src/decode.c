@@ -14,9 +14,16 @@
 #define AV_CODEC_ID_H264 CODEC_ID_H264
 #endif
 
+
 #if (LIBAVUTIL_VERSION_MAJOR < 55)
 #define AV_PIX_FMT_RGB24 PIX_FMT_RGB24
 #define AV_PIX_FMT_GRAY8 PIX_FMT_GRAY8
+#define AV_PIX_FMT_YUVJ420P PIX_FMT_YUVJ420P
+#define AV_PIX_FMT_YUVJ422P PIX_FMT_YUVJ422P
+#define AV_PIX_FMT_YUVJ444P PIX_FMT_YUVJ444P
+#define AV_PIX_FMT_YUV420P PIX_FMT_YUV420P
+#define AV_PIX_FMT_YUV422P PIX_FMT_YUV422P
+#define AV_PIX_FMT_YUV444P PIX_FMT_YUV444P
 #endif
 
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(55,28,1)
@@ -31,6 +38,31 @@ struct decode {
     uint64_t next_time;
     struct mkv *m;
 };
+
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57,64,101) // Debian Stretch
+static void replace_deprecated_codecs(struct decode *p)
+{
+    switch (p->codec_context->pix_fmt) {
+    case AV_PIX_FMT_YUVJ420P:
+        p->codec_context->pix_fmt = AV_PIX_FMT_YUV420P;
+        p->codec_context->color_range = AVCOL_RANGE_JPEG;
+        break;
+
+    case AV_PIX_FMT_YUVJ422P:
+        p->codec_context->pix_fmt = AV_PIX_FMT_YUV422P;
+        p->codec_context->color_range = AVCOL_RANGE_JPEG;
+        break;
+
+    case AV_PIX_FMT_YUVJ444P:
+        p->codec_context->pix_fmt = AV_PIX_FMT_YUV444P;
+        p->codec_context->color_range = AVCOL_RANGE_JPEG;
+        break;
+
+    default:
+        break;
+    }
+}
+#endif
 
 struct decode *decode_open(struct mkv *m) {
 
@@ -90,12 +122,37 @@ int decode_frame(struct decode *p, struct mkv_frame *frm, uint8_t *img, uint64_t
         }
 
         struct SwsContext *img_convert_ctx;
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57,64,101) // Debian Stretch
+        replace_deprecated_codecs(p);
+#endif
         img_convert_ctx = sws_getCachedContext(NULL,
                                                p->m->width, p->m->height,
                                                p->codec_context->pix_fmt,
                                                p->m->width, p->m->height,
                                                pixfmt,
                                                SWS_BICUBIC, NULL, NULL,NULL);
+
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57,64,101) // Debian Stretch
+        if (p->codec_context->color_range == AVCOL_RANGE_JPEG) {
+            // We need to set the correct color space information for swscaler
+            int placeholder[4], srcRange, dstRange, brightness, contrast,
+                saturation;
+            sws_getColorspaceDetails(img_convert_ctx, (int **)&placeholder,
+                                     &srcRange, (int **)&placeholder, &dstRange,
+                                     &brightness, &contrast, &saturation);
+
+            srcRange = 1; // Indicate that white-black range of input is JPEG
+
+            // Get the default YUV2RGB coefficients
+            const int *coefs = sws_getCoefficients(SWS_CS_DEFAULT);
+
+            // Setup the color space
+            sws_setColorspaceDetails(img_convert_ctx, coefs, srcRange, coefs,
+                                     dstRange, brightness, contrast,
+                                     saturation);
+        }
+#endif
+
         uint8_t *const planes[] = {img};
         sws_scale(img_convert_ctx,
               (const uint8_t * const*) ((AVPicture*)p->picture)->data,
