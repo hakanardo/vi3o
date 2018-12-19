@@ -86,7 +86,7 @@ struct decode *decode_open(struct mkv *m) {
     p->codec_context->extradata = m->codec_private;
     p->codec_context->extradata_size = m->codec_private_len;
     int rc = avcodec_open2(p->codec_context, p->codec, NULL);
-    assert(rc>=0);
+    if (!rc) return NULL;
     p->picture = av_frame_alloc();
 //    p->picture = avcodec_alloc_frame();
 

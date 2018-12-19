@@ -165,7 +165,7 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
                 s->cur += len;
                 break;
             case 0x86: // CodecId
-                s->codec_id = strndup(s->cur, len);
+                s->codec_id = strndup((char *)s->cur, len);
                 s->cur += len;
                 break;
             case 0xE0: // Video
