@@ -9,7 +9,7 @@ from threading import Lock
 decode_open_lock = Lock()
 
 class Mkv(object):
-    def __init__(self, filename, grey=False):
+    def __init__(self, filename, grey=False, reindex=False):
         if sys.version_info > (3,):
             filename = bytes(filename, "utf8")
         self.filename = filename
@@ -28,7 +28,7 @@ class Mkv(object):
                 self.mjpg_mode = index['mjpg_mode']
                 need_index = False
 
-        if need_index:
+        if need_index or reindex:
             self.frame = []
             m = lib.mkv_open(self.filename)
             frm = ffi.new('struct mkv_frame *')
