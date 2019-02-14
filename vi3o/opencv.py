@@ -5,7 +5,7 @@
 
 import cv2
 from vi3o.image import ptpscale
-from vi3o.utils import Frame
+from vi3o.utils import Frame, SlicedView
 import os
 import numpy as np
 
@@ -46,6 +46,8 @@ class CvVideo(object):
         return self
 
     def __getitem__(self, item):
+        if isinstance(item, slice):
+            return SlicedView(self, item)
         self.capture.set(cv2.CAP_PROP_POS_FRAMES, item)
         return self.next()
 
