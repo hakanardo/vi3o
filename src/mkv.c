@@ -148,7 +148,14 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
                 frm->key_frame = (s->cur[3]&0x80)>>7;
                 s->cur += len;
                 if (!handle_axis_block(s, frm->data, frm->len, frm->pts)) {
+                    if (frm->key_frame) {
+                        printf("%d: Keyframe\n", frm->pts);
+                    } else {
+                        printf("%d: Frame\n", frm->pts);
+                    }
                     return 1;
+                } else {
+                    printf("%d: SEI\n", frm->pts);
                 }
                 break;
             case 0xa4: // CodecState
