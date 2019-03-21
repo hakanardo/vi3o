@@ -102,6 +102,9 @@ int handle_axis_block(struct mkv *s, uint8_t *data, int len, uint64_t ts) {
                 systime += data[pos+4] * 10000;
                 s->systime_offset_sum += systime-ts;
                 s->systime_offset_count += 1;
+                if (len - pos > 12) {
+                    return 2;
+                }
                 return 1;
             } else {
                 break;
@@ -147,15 +150,17 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
                 frm->len = len - 4;
                 frm->key_frame = (s->cur[3]&0x80)>>7;
                 s->cur += len;
-                if (!handle_axis_block(s, frm->data, frm->len, frm->pts)) {
+                int r = handle_axis_block(s, frm->data, frm->len, frm->pts);
+                if (r != 0) {
+                    printf("%d: SEI\n", frm->pts);
+                }
+                if (r != 1) {
                     if (frm->key_frame) {
                         printf("%d: Keyframe\n", frm->pts);
                     } else {
                         printf("%d: Frame\n", frm->pts);
                     }
                     return 1;
-                } else {
-                    printf("%d: SEI\n", frm->pts);
                 }
                 break;
             case 0xa4: // CodecState
