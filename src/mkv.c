@@ -102,6 +102,9 @@ int handle_axis_block(struct mkv *s, uint8_t *data, int len, uint64_t ts) {
                 systime += data[pos+4] * 10000;
                 s->systime_offset_sum += systime-ts;
                 s->systime_offset_count += 1;
+                if (len - pos > 12) {
+                    return 0;
+                }
                 return 1;
             } else {
                 break;
