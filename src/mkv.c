@@ -138,7 +138,8 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
             case 0xa3: // SimpleBlock
                 if (s->cur + len > s->data + s->len) {s->cur += len; break;}
                 assert(s->cur[0] == 129);
-                frm->pts = s->time_offset + (s->cur[1]<<8) + s->cur[2];
+                int16_t timecode = (int16_t) ((s->cur[1]<<8) + s->cur[2]);
+                frm->pts = s->time_offset + timecode;
                 frm->pts *= s->time_scale / 1000;
                 if (s->systime_offset) {
                     frm->systime = frm->pts + s->systime_offset;
@@ -160,6 +161,14 @@ int mkv_next(struct mkv *s, struct mkv_frame *frm) {
             case 0x1654ae6b: // Tracks
                 break;
             case 0xae: // TrackEntry
+                break;
+            case 0xd7: // TrackNumber
+                if (s->cur + len > s->data + s->len) {s->cur += len; break;}
+                uint64_t track_number = get_uint(s, len);
+                break;
+            case 0x83: // TrackType
+                if (s->cur + len > s->data + s->len) {s->cur += len; break;}
+                uint64_t track_type = get_uint(s, len);
                 break;
             case 0x63a2: // CodecPrivate
                 if (s->cur + len > s->data + s->len) {s->cur += len; break;}

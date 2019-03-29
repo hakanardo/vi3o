@@ -49,6 +49,7 @@ class Mkv(object):
                            'systime_offset': self.systime_offset,
                            'mjpg_mode': self.mjpg_mode,
                            'version': 3}, fd)
+
     @property
     def systimes(self):
         if self.mjpg_mode:
@@ -80,11 +81,13 @@ class Mkv(object):
         if keyindex > self.myiter.fcnt or item < self.myiter.fcnt:
             lib.mkv_seek(self.myiter.m, self.frame[keyindex][1])
             lib.mkv_next(self.myiter.m, self.myiter.frm)
+            self.myiter.fcnt = keyindex
         for img in self.myiter:
             if img.pts == pts or self.mjpg_mode:
                 self.myiter.fcnt = item + 1
-                img.index = item
                 return img
+            elif img.pts > pts:
+                pass # We might get newer frames that was already in the pipe before the seek
         assert False
 
     def __len__(self):
