@@ -81,9 +81,9 @@ class Mkv(object):
         if keyindex > self.myiter.fcnt or item < self.myiter.fcnt:
             lib.mkv_seek(self.myiter.m, self.frame[keyindex][1])
             lib.mkv_next(self.myiter.m, self.myiter.frm)
-            self.myiter.fcnt = keyindex
         for img in self.myiter:
             if img.pts == pts or self.mjpg_mode:
+                img.index = item
                 self.myiter.fcnt = item + 1
                 return img
             elif img.pts > pts:
