@@ -19,8 +19,8 @@ def Video(filename, grey=False):
         from vi3o.mjpg import Mjpg
         return Mjpg(filename, grey)
     else:
-        from vi3o.opencv import CvVideo
-        return CvVideo(filename, grey)
+        from vi3o.imageio import ImageioVideo
+        return ImageioVideo(filename, grey)
 
 
 def _get_debug_viewer(name):
