@@ -125,8 +125,8 @@ class DebugViewer(object):
 
         img = self._stack([img for img, _ in self.image_array])
         intensity = self._stack([ii for _, ii in self.image_array])
-        self.color_mask = np.hstack([len(ii.shape)==3] * ii.shape[1]
-                                    for _, ii in self.image_array)
+        self.color_mask = np.hstack([[len(ii.shape)==3] * ii.shape[1]
+                                     for _, ii in self.image_array])
         # FIXME: split image_array
 
         if self.image is None:
