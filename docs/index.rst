@@ -50,6 +50,11 @@ Then there are a few different ways to install vi3o:
 Whats new
 =========
 
+v0.8.0
+------
+* Silence some compiler warnings
+* Added reindex parameter to :class:`vi3o.mkv.Mkv`
+
 v0.7.4
 ------
 * Remove numpy as dependency to setup.py

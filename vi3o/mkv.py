@@ -8,6 +8,8 @@ from vi3o._mjpg import ffi as mjpg_ffi
 from threading import Lock
 decode_open_lock = Lock()
 
+INDEX_VERSION = 4
+
 class Mkv(object):
     def __init__(self, filename, grey=False, reindex=False):
         if sys.version_info > (3,):
@@ -22,7 +24,7 @@ class Mkv(object):
         idx = index_file(self.filename)
         if os.path.exists(idx):
             index = json.load(open(idx))
-            if index['version'] == 3:
+            if index['version'] == INDEX_VERSION:
                 self.frame = index['frame']
                 self.systime_offset = index['systime_offset']
                 self.mjpg_mode = index['mjpg_mode']
@@ -48,7 +50,7 @@ class Mkv(object):
                 json.dump({'frame': self.frame,
                            'systime_offset': self.systime_offset,
                            'mjpg_mode': self.mjpg_mode,
-                           'version': 3}, fd)
+                           'version': INDEX_VERSION}, fd)
 
     @property
     def systimes(self):
