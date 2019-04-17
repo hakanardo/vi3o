@@ -60,6 +60,7 @@ v0.8.0
 * Use imageio as default fallback video decoder instead as opencv is missbehaving
 * Silence deprication warning
 * Removed deprecated pixel format warning on Ubuntu Xenial
+* Bumped index version number to eusure indexes are recreated with above bugfixes
 
 
 v0.7.4
