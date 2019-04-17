@@ -1,5 +1,6 @@
 from __future__ import division
 import imageio, os
+from vi3o.utils import SlicedView
 
 class ImageioVideo(object):
     def __init__(self, filename, grey=False):
@@ -23,3 +24,7 @@ class ImageioVideo(object):
         img.index = item
         img.timestamp = item / self.fps
         return img
+
+    @property
+    def systimes(self):
+        return [i / self.fps for i in range(len(self))]
