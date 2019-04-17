@@ -54,6 +54,13 @@ v0.8.0
 ------
 * Silence some compiler warnings
 * Added reindex parameter to :class:`vi3o.mkv.Mkv`
+* Support for sliced views of :class:`vi3o.opencv.CvVideo`
+* Support for mkv files with both keyframe and user data frame in the same matrosca frame
+* Support for negative timecodes in mkv streams
+* Use imageio as default fallback video decoder instead as opencv is missbehaving
+* Silence deprication warning
+* Removed deprecated pixel format warning on Ubuntu Xenial
+
 
 v0.7.4
 ------
