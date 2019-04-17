@@ -39,7 +39,7 @@ struct decode {
     struct mkv *m;
 };
 
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57,64,101) // Debian Stretch
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(56,60,100) // Debian Stretch, Ubuntu Xenial
 static void replace_deprecated_codecs(struct decode *p)
 {
     switch (p->codec_context->pix_fmt) {
@@ -125,7 +125,7 @@ int decode_frame(struct decode *p, struct mkv_frame *frm, uint8_t *img, uint64_t
         }
 
         struct SwsContext *img_convert_ctx;
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57,64,101) // Debian Stretch
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(56,60,100) // Debian Stretch, Ubuntu Xenial
         replace_deprecated_codecs(p);
 #endif
         img_convert_ctx = sws_getCachedContext(NULL,
@@ -135,7 +135,7 @@ int decode_frame(struct decode *p, struct mkv_frame *frm, uint8_t *img, uint64_t
                                                pixfmt,
                                                SWS_BICUBIC, NULL, NULL,NULL);
 
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(57,64,101) // Debian Stretch
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(56,60,100) // Debian Stretch, Ubuntu Xenial
         if (p->codec_context->color_range == AVCOL_RANGE_JPEG) {
             // We need to set the correct color space information for swscaler
             int placeholder[4], srcRange, dstRange, brightness, contrast,
