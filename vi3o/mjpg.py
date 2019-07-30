@@ -21,6 +21,7 @@ class Mjpg(object):
         open(filename).close()
         self._myiter = None
         self._index = None
+        self.myiter.next()  # Verify that data is readable
 
     def __iter__(self):
         return MjpgIter(self.filename, self.grey)
@@ -87,6 +88,10 @@ class Mjpg(object):
         return ffi.string(self.myiter.m.firmware)
 
 
+class UnsupportedFormatError(Exception):
+    pass
+
+
 class MjpgIter(object):
     def __init__(self, filename, grey=False):
         self.m = ffi.new("struct mjpg *")
@@ -105,19 +110,24 @@ class MjpgIter(object):
 
     def next(self):
         r = lib.mjpg_next_head(self.m)
-        if r != lib.OK:
+        if r == lib.ERROR_EOF:
             raise StopIteration
+        if r != lib.OK:
+            raise UnsupportedFormatError
         if self.channels == 1:
             shape = (self.m.height, self.m.width)
         else:
             shape = (self.m.height, self.m.width, self.channels)
         img = Frame(shape, 'B')
-        assert img.__array_interface__['strides'] is None
+        if img.__array_interface__['strides'] is not None:
+            raise UnsupportedFormatError
         self.m.pixels = ffi.cast('unsigned char *', img.__array_interface__['data'][0])
 
         r = lib.mjpg_next_data(self.m)
-        if r != lib.OK:
+        if r == lib.ERROR_EOF:
             raise StopIteration
+        if r != lib.OK:
+            raise UnsupportedFormatError
 
         # img = img.reshape(shape).view(type=Frame)
         img.timestamp = self.m.timestamp_sec + self.m.timestamp_usec / 1000000.0

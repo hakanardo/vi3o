@@ -108,6 +108,11 @@ class Mkv(object):
 class DecodeError(Exception):
     pass
 
+
+class UnsupportedFormatError(DecodeError):
+    pass
+
+
 class H264Decoder(object):
     def open(self, m):
         with decode_open_lock:
@@ -152,8 +157,10 @@ class MkvIter(object):
         self.frm = ffi.new('struct mkv_frame *')
         self.out_of_packages = False
         lib.mkv_next(self.m, self.frm)
-        assert self.m.codec_private
-        assert self.m.codec_private_len > 0
+        if not self.m.codec_private:
+            raise UnsupportedFormatError()
+        if self.m.codec_private_len <= 0:
+            raise UnsupportedFormatError()
         if ffi.string(self.m.codec_id) == b'V_MS/VFW/FOURCC':
             self.decoder = MjpgDecoder()
         else:
@@ -170,7 +177,10 @@ class MkvIter(object):
             raise IOError("Failed to open: " + filename)
 
     def __del__(self):
-        del self.decoder
+        try:
+            del self.decoder
+        except AttributeError:
+            pass
         lib.mkv_close(self.m)
 
     def estimate_systime_offset(self):
@@ -180,14 +190,16 @@ class MkvIter(object):
         return self
 
     def next(self):
-        assert self.m.width > 0
+        if self.m.width <= 0:
+            raise UnsupportedFormatError()
         if self.channels == 1:
             shape = (self.m.height, self.m.width)
         else:
             shape = (self.m.height, self.m.width, self.channels)
 
         img = Frame(shape, 'B')
-        assert img.__array_interface__['strides'] is None
+        if img.__array_interface__['strides'] is not None:
+            raise UnsupportedFormatError()
         pixels = ffi.cast('uint8_t *', img.__array_interface__['data'][0])
 
         while True:

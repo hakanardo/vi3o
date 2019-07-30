@@ -12,15 +12,20 @@ def Video(filename, grey=False):
     Creates a *Video* object representing the video in the file *filename*.
     See Overview above.
     """
-    if filename.endswith('.mkv'):
-        from vi3o.mkv import Mkv
+    from vi3o.mkv import Mkv, UnsupportedFormatError as MkvUnsupported
+    try:
         return Mkv(filename, grey)
-    elif filename.endswith('.mjpg'):
-        from vi3o.mjpg import Mjpg
+    except MkvUnsupported:
+        pass
+
+    from vi3o.mjpg import Mjpg, UnsupportedFormatError as MjpgUnsupported
+    try:
         return Mjpg(filename, grey)
-    else:
-        from vi3o.imageio import ImageioVideo
-        return ImageioVideo(filename, grey)
+    except MjpgUnsupported:
+        pass
+
+    from vi3o.imageio import ImageioVideo
+    return ImageioVideo(filename, grey)
 
 
 def _get_debug_viewer(name):
