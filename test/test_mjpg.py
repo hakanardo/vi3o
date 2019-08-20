@@ -2,6 +2,7 @@ from py.test import raises
 from vi3o.mjpg import Mjpg, jpg_info
 from vi3o.utils import index_file
 import os
+from vi3o.compat import pathlib
 
 mydir = os.path.dirname(__file__)
 test_mjpg = os.path.join(mydir, "t.mjpg")
@@ -42,6 +43,9 @@ def test_idx():
 def test_no_file():
     with raises(IOError):
         Mjpg(test_mjpg + 'not_there')
+
+def test_mjpg_pathlib_open():
+    _ = Mjpg(pathlib.Path(test_mjpg))
 
 def test_slice():
     video = Mjpg(test_mjpg)

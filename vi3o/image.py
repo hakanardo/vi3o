@@ -19,6 +19,8 @@ def imsave(img, filename, format=None):
     Save the image *img* into a file named *filename*. If the fileformat is not specified
     in *format*, the filename extension will be used as *format*.
     """
+    # Be compatible with pathlib.Path filenames
+    filename = str(filename)
     if format is None:
         format = filename.split('.')[-1]
     if format == 'jpg':
@@ -42,7 +44,8 @@ def imread(filename, repair=False):
     broken frames, in which case partially decoded frames might be returned. A warning is printed
     to standard output unless *repair* is set to :class:`vi3o.image.Silent`.
     """
-    a =  PIL.Image.open(filename)
+    # Be compatible with pathlib.Path filenames
+    a =  PIL.Image.open(str(filename))
     try:
         a.load()
     except IOError as e:
