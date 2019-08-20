@@ -21,6 +21,9 @@ def Video(filename, grey=False):
     elif filename.endswith('.mjpg'):
         from vi3o.mjpg import Mjpg
         return Mjpg(filename, grey)
+    elif filename.endswith('recording.xml'):
+        from vi3o.recording import read_recording_xml, Recording
+        return Recording(read_recording_xml(filename), grey=grey)
     else:
         from vi3o.imageio import ImageioVideo
         return ImageioVideo(filename, grey)
