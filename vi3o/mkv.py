@@ -1,5 +1,5 @@
 import json
-import os, sys
+import os
 from vi3o._mkv import ffi, lib
 from vi3o.utils import SlicedView, index_file, Frame
 from vi3o._mjpg import lib as mjpg_lib
@@ -12,8 +12,8 @@ INDEX_VERSION = 4
 
 class Mkv(object):
     def __init__(self, filename, grey=False, reindex=False):
-        if sys.version_info > (3,):
-            filename = bytes(filename, "utf8")
+        # Be compatible with pathlib.Path filenames
+        filename = str(filename).encode('utf-8')
         self.filename = filename
         self.grey = grey
         open(filename).close()

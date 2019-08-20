@@ -8,6 +8,7 @@ import os
 import pickle
 
 from vi3o.utils import index_file
+from vi3o.compat import pathlib
 
 mydir = os.path.dirname(__file__)
 test_mkv = os.path.join(mydir, "t.mkv")
@@ -53,6 +54,9 @@ def test_idx():
 def test_no_file():
     with raises(IOError):
         Mkv(test_mkv + 'not_there')
+
+def test_mkv_pathlib_open():
+    _ = Mkv(pathlib.Path(test_mkv))
 
 def test_slice():
     video = Mkv(test_mkv)

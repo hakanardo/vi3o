@@ -8,6 +8,10 @@ import os
 with open(os.path.join(os.path.dirname(__file__), "vi3o", "version.py")) as fp:
     exec(fp.read())
 
+requirements=["cffi>=1.0.0", "numpy>=1.7.1,<1.17"]
+if sys.version_info <= (3, 3, 0):
+    requirements.append("pathlib2")
+
 class PyTestCommand(TestCommand):
     user_options = []
 
@@ -37,7 +41,7 @@ time at the time of capture is provided as timestamp for each frame.
     license='MIT',
     setup_requires=["cffi>=1.0.0"],
     cffi_modules=["build_mjpg.py:ffi", "build_mkv.py:ffi"],
-    install_requires=["cffi>=1.0.0", "numpy>=1.7.1,<1.17"],
+    install_requires=requirements,
     cmdclass={'test': PyTestCommand},
     tests_require=['pytest <= 4.6, !=4.6.0', 'pillow < 7'],
 )

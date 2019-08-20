@@ -12,6 +12,9 @@ def Video(filename, grey=False):
     Creates a *Video* object representing the video in the file *filename*.
     See Overview above.
     """
+    # Be compatible with pathlib.Path filenames
+    filename = str(filename)
+
     if filename.endswith('.mkv'):
         from vi3o.mkv import Mkv
         return Mkv(filename, grey)
