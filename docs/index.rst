@@ -26,11 +26,20 @@ First, install some dependencies:
 
 Then there are a few different ways to install vi3o:
 
-* Use pip:
+* Use pip to install vi3o with the minimal set of dependencies:
 
     .. code-block:: bash
+        pip install vi3o
 
-        sudo pip install vi3o
+* or install vi3o with all necessary dependencies:
+
+    .. code-block:: bash
+        pip install "vi3o[full]"
+
+   The necessary additional dependencies for full functionality are:
+
+        * pillow < 7.0
+        * pyglet < 1.5
 
 * or get the source code via the `Python Package Index`__.
 
@@ -42,7 +51,7 @@ Then there are a few different ways to install vi3o:
 
       git clone https://github.com/hakanardo/vi3o.git
       cd vi3o
-      sudo python setup.py install
+      python setup.py install
 
 .. _`Github`: https://github.com/hakanardo/vi3o
 

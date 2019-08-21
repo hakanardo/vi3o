@@ -42,6 +42,12 @@ time at the time of capture is provided as timestamp for each frame.
     setup_requires=["cffi>=1.0.0"],
     cffi_modules=["build_mjpg.py:ffi", "build_mkv.py:ffi"],
     install_requires=requirements,
+    extras_require={
+        "full": [
+            "pillow < 7",
+            "pyglet < 1.5"
+        ]
+    },
     cmdclass={'test': PyTestCommand},
     tests_require=['pytest <= 4.6, !=4.6.0', 'pillow < 7', "mock"],
 )

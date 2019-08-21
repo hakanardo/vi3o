@@ -8,6 +8,17 @@ import numpy as np
 
 global_pyglet_lock = RLock()
 
+_PYGLET_VERSION = tuple(int(v) for v in pyglet.version.split('.'))
+
+# Compatibility fix for breaking pyglet changes in 1.3 -> 1.4
+if _PYGLET_VERSION >= (1, 4, 0):
+    def get_texture(img):
+        return img.get_texture()
+else:
+    def get_texture(img):
+        return img.texture
+
+
 class DebugViewer(object):
     paused = False
     step_counter = 0
@@ -143,9 +154,10 @@ class DebugViewer(object):
             pitch = -img.shape[1]
         self.image = pyglet.image.ImageData(img.shape[1], img.shape[0], f, img.tostring(), pitch)
 
-        glTexParameteri(self.image.texture.target,
+        texture = get_texture(self.image)
+        glTexParameteri(texture.target,
             GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-        glTexParameteri(self.image.texture.target,
+        glTexParameteri(texture.target,
             GL_TEXTURE_MIN_FILTER, GL_NEAREST)
         if resize:
             self.on_resize(self.window.width, self.window.height)
