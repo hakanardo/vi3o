@@ -41,7 +41,7 @@ ENV https_proxy={https_proxy}
 
 RUN apt-get update && apt-get install -y --no-install-recommends {dependencies}
 
-RUN pip install pytest
+RUN pip install "pytest<=4.6, !=4.6.0"
 """.format(
         image=image,
         https_proxy=HTTPS_PROXY,
