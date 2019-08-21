@@ -1,28 +1,14 @@
 # Py2 compat
 from __future__ import unicode_literals, print_function
 
-import itertools
 import os
 import sys
 
 import pytest
 import vi3o
 from vi3o import cat
+from test.util import _FakeVideo, itertools, mock
 
-# Python2 compatibility
-if sys.version_info >= (3, 3, 0):
-    from unittest import mock
-else:
-    import mock
-
-    # Provide an _accumulate function for Py2
-    def _accumulate(vals):
-        retval = 0
-        for val in vals:
-            retval += val
-            yield retval
-
-    itertools.accumulate = _accumulate
 
 
 _LENGTHS = [5, 7, 3]
@@ -39,35 +25,6 @@ _EXPECTED_SYSTIMES = [_BASE_OFFSET + x for x in range(sum(_LENGTHS))]
 # Timestamps should be sequential with 0 offset
 _EXPECTED_TIMESTAMPS = [x for x in range(sum(_LENGTHS))]
 
-
-class _FakeVideo(object):
-    def __init__(self, length):
-        self._length = length
-        # Implementation detail of vi3o.mkv.Mkv
-        self.frame = list((idx * 1.0e6, idx, idx) for idx in range(length))
-
-    def __iter__(self):
-        for idx in range(self._length):
-            obj = mock.MagicMock()
-            obj.timestamp = idx
-            obj.systime = idx
-            yield obj
-
-    @property
-    def systimes(self):
-        return list(range(self._length))
-
-    def __len__(self):
-        return self._length
-
-    def __getitem__(self, idx):
-        if 0 <= idx < self._length:
-            obj = mock.MagicMock()
-            obj.timestamp = idx
-            obj.systime = idx
-            return obj
-
-        raise IndexError
 
 
 @pytest.fixture(scope="function")
