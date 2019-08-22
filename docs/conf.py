@@ -33,7 +33,7 @@ sys.path = [os.path.dirname(os.path.dirname(__file__))] + sys.path
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.coverage',
-    'sphinx.ext.pngmath',
+    'sphinx.ext.imgmath',
     'sphinx.ext.viewcode',
 ]
 
