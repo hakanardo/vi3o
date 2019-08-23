@@ -14,8 +14,8 @@ class Mjpg(object):
     is returned. It has a few additional format specific properties:
     """
     def __init__(self, filename, grey=False):
-        if sys.version_info > (3,):
-            filename = bytes(filename, "utf8")
+        # Be compatible with pathlib.Path filenames
+        filename = str(filename).encode('utf-8')
         self.filename = filename
         self.grey = grey
         open(filename).close()

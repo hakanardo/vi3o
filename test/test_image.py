@@ -2,6 +2,7 @@ from vi3o.image import *
 from test.util import TempDir
 import numpy as np
 from py.test import raises
+from vi3o.compat import pathlib
 
 mydir = os.path.dirname(__file__)
 test_jpg = os.path.join(mydir, "00000000.jpg")
@@ -36,6 +37,15 @@ def test_scale():
     img = np.zeros((240, 320), 'B')
     assert imscale(img, 0.5).shape == (120, 160)
     assert imscale(img, (160, 120)).shape == (120, 160)
+
+def test_imsave_and_imread_pathlib():
+    with TempDir() as d:
+        img = np.zeros((320, 240, 3), 'B')
+        img[10, 20] = 255
+        path = pathlib.Path("t1.jpg")
+        imsave(img, path, "jpg")
+        imread(path)
+
 
 def test_imgdir():
     with TempDir() as d:
