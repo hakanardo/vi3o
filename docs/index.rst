@@ -58,6 +58,13 @@ Then there are a few different ways to install vi3o:
 
 Whats new
 =========
+v0.9.0
+------
+* Added :py:class:`vi3o.recording.Recording` for reading AXIS NAS/SD-card recordings.
+* Fixed segfault when requesting grey encoding.
+* Fixed library compatibility with :mod:`pathlib`.
+* Fixed compatibility for Pyglet 1.4.
+* Fixed pinning of dependencies to Python 2.7 compatible versions.
 
 v0.8.0
 ------
@@ -242,6 +249,9 @@ Modules
    :imported-members:
 
 .. automodule:: vi3o.mjpg
+   :members:
+
+.. automodule:: vi3o.recording
    :members:
 
 .. automodule:: vi3o.image
