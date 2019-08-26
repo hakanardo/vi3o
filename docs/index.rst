@@ -65,6 +65,8 @@ v0.9.0
 * Fixed library compatibility with :mod:`pathlib`.
 * Fixed compatibility for Pyglet 1.4.
 * Fixed pinning of dependencies to Python 2.7 compatible versions.
+* Fixed segfault when requesting gray video.
+* Fixed timestamps property of frames from :py:class:`vi3o.cat.VideoCat` to be relative to first frame in first video.
 
 v0.8.0
 ------
