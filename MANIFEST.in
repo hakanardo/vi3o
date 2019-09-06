@@ -1,2 +1,10 @@
-include build_*.py src/*.h
-include LICENSE README.rst requirements.txt
+include LICENSE 
+include README.rst 
+include requirements.txt
+
+recursive-include src/_cffi_src *.py *.c *.h
+recursive-include tests *.py
+
+prune docs/_build
+recursive-exclude scripts *
+exclude .coveragerc tox.ini requirements.txt

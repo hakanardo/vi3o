@@ -8,7 +8,7 @@ import pytest
 import vi3o.compat as compat
 from vi3o import recording
 
-from test.util import _FakeVideo, itertools, mock
+from tests.util import _FakeVideo, itertools, mock
 
 # pylint: disable=missing-docstring
 # pylint: disable=redefined-outer-name
