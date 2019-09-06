@@ -30,9 +30,9 @@ ffi.cdef("""
         int mjpg_seek (struct mjpg *m, long offset);
 
          """)
-ffi.set_source("vi3o._mjpg", '#include "src/mjpg.h"',
+ffi.set_source("vi3o._mjpg", '#include "mjpg.h"',
                include_dirs=[mydir],
-               sources=["src/mjpg.c"],
+               sources=[os.path.join(mydir, "mjpg.c")],
                libraries=["jpeg"], )
 
 if __name__ == '__main__':

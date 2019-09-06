@@ -1,0 +1,11 @@
+[run]
+branch = True
+source = vi3o
+
+[paths]
+source =
+    src/vi3o
+    .tox/*/lib/python*/site-packages/vi3o
+
+[report]
+show_missing = True

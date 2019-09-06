@@ -34,9 +34,9 @@ ffi.cdef("""
         int64_t mkv_estimate_systime_offset(struct mkv *s);
 
          """)
-ffi.set_source("vi3o._mkv", '#include "src/decode.h"',
+ffi.set_source("vi3o._mkv", '#include "decode.h"',
                include_dirs=[mydir],
-               sources=["src/mkv.c", "src/decode.c"],
+               sources=[os.path.join(mydir, "mkv.c"), os.path.join(mydir,"decode.c")],
                # cflags=["-g"],
                libraries=["avcodec", "swscale"])
 

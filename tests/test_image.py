@@ -1,5 +1,5 @@
 from vi3o.image import *
-from test.util import TempDir
+from tests.util import TempDir
 import numpy as np
 from py.test import raises
 from vi3o.compat import pathlib

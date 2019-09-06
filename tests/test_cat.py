@@ -7,7 +7,7 @@ import sys
 import pytest
 import vi3o
 from vi3o import cat
-from test.util import _FakeVideo, itertools, mock
+from tests.util import _FakeVideo, itertools, mock
 
 
 
