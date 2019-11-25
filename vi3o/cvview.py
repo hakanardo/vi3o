@@ -5,7 +5,7 @@ windows = {}
 
 def _on_mouse(event, x, y, flags, name):
     if event == cv2.EVENT_LBUTTONDOWN:
-        print "Click:", x, y
+        print("Click:", x, y)
 
 def view(img, name="Video"):
     if name not in windows:

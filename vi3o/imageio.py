@@ -13,6 +13,8 @@ class ImageioVideo(object):
         except ValueError:
             self.reader = imageio.get_reader(filename, 'ffmpeg')
         self.fps = self.reader.get_meta_data()['fps']
+        if self.fps == 0:
+            self.fps = 25
 
     def __len__(self):
         return len(self.reader)
