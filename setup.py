@@ -8,9 +8,32 @@ import os
 with open(os.path.join(os.path.dirname(__file__), "vi3o", "version.py")) as fp:
     exec(fp.read())
 
-requirements=["cffi>=1.0.0", "numpy>=1.7.1,<1.17"]
-if sys.version_info <= (3, 3, 0):
-    requirements.append("pathlib2")
+PY3_3 = sys.version_info <= (3,3,0)
+PY2 = sys.version_info <= (2, 8, 0)
+
+def _resolve_numpy():
+    if PY2:
+        return "numpy >= 1.7.1, < 1.17"
+    return "numpy >= 1.7.1"
+
+constraints = {
+        "mock": "mock <= 3.0.5",
+        "cffi": "cffi>=1.0.0",
+        "pathlib": "pathlib2" if PY3_3 else "pathlib",
+        "numpy": _resolve_numpy(),
+        "pillow": "pillow < 7" if PY2 else "pillow",
+        "pyglet": "pyglet < 1.5" if PY2 else "pyglet",
+        "pytest": "pytest <= 4.6, !=4.6.0",
+
+}
+
+_test_keys = ["pytest", "pillow"]
+if PY2:
+    _test_keys.append("mock")
+
+requirements_full = [constraints[key] for key in ["pyglet", "pillow"]]
+requirements_test = [constraints[key] for key in _test_keys]
+requirements = [constraints[key] for key in ["cffi", "numpy"]]
 
 class PyTestCommand(TestCommand):
     user_options = []
@@ -43,11 +66,8 @@ time at the time of capture is provided as timestamp for each frame.
     cffi_modules=["build_mjpg.py:ffi", "build_mkv.py:ffi"],
     install_requires=requirements,
     extras_require={
-        "full": [
-            "pillow < 7",
-            "pyglet < 1.5"
-        ]
+        "full": requirements_full
     },
     cmdclass={'test': PyTestCommand},
-    tests_require=['pytest <= 4.6, !=4.6.0', 'pillow < 7', "mock"],
+    tests_require=requirements_test,
 )
