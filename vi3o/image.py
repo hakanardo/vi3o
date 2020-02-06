@@ -20,15 +20,18 @@ def imsave(img, filename, format=None):
     Save the image *img* into a file named *filename*. If the fileformat is not specified
     in *format*, the filename extension will be used as *format*.
     """
-    # Be compatible with pathlib.Path filenames
-    filename = str(filename)
     if format is None:
         format = filename.split('.')[-1]
     if format == 'jpg':
         format = 'jpeg'
     if img.dtype != 'B':
         img = np.minimum(np.maximum(img, 0), 255).astype('B')
-    PIL.Image.fromarray(img).save(filename, format.lower())
+    try:
+        # filename might be an open file
+        PIL.Image.fromarray(img).save(filename, format.lower())
+    except AttributeError:
+        # Try converting filename to a string to handle e.g. patlib2 paths
+        PIL.Image.fromarray(img).save(str(filename), format.lower())
 
 def imsavesc(img, filename, format=None):
     """
@@ -45,8 +48,12 @@ def imread(filename, repair=False):
     broken frames, in which case partially decoded frames might be returned. A warning is printed
     to standard output unless *repair* is set to :class:`vi3o.image.Silent`.
     """
-    # Be compatible with pathlib.Path filenames
-    a =  PIL.Image.open(str(filename))
+    try:
+        # filename might be an open file
+        a =  PIL.Image.open(filename)
+    except AttributeError:
+        # Try converting filename to a string to handle e.g. patlib2 paths
+        a =  PIL.Image.open(str(filename))
     pillow_truncated_img = PIL.ImageFile.LOAD_TRUNCATED_IMAGES
     try:
         PIL.ImageFile.LOAD_TRUNCATED_IMAGES = False
