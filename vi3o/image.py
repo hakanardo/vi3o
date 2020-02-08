@@ -4,6 +4,7 @@
 """
 
 import PIL.Image
+import PIL.ImageFile
 import numpy as np
 import os
 from vi3o import view
@@ -46,13 +47,19 @@ def imread(filename, repair=False):
     """
     # Be compatible with pathlib.Path filenames
     a =  PIL.Image.open(str(filename))
+    pillow_truncated_img = PIL.ImageFile.LOAD_TRUNCATED_IMAGES
     try:
+        PIL.ImageFile.LOAD_TRUNCATED_IMAGES = False
         a.load()
     except IOError as e:
         if not repair:
             raise
         if repair is not Silent:
             print("Warning: IOError while reading '%s': %s" % (filename, e))
+        PIL.ImageFile.LOAD_TRUNCATED_IMAGES = True  # Allow partial decode if truncated images
+        a.load()
+    finally:
+        PIL.ImageFile.LOAD_TRUNCATED_IMAGES = pillow_truncated_img
     return np.array(a)
 
 
