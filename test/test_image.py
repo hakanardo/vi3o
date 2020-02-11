@@ -3,6 +3,7 @@ from test.util import TempDir
 import numpy as np
 from py.test import raises
 from vi3o.compat import pathlib
+import io
 
 mydir = os.path.dirname(__file__)
 test_jpg = os.path.join(mydir, "00000000.jpg")
@@ -107,3 +108,21 @@ def test_imread():
     img = imread(test_jpg2, True)
     assert isinstance(img, np.ndarray)
     assert img.shape == (240, 320, 3)
+
+def test_imread_open_file():
+    img = imread(open(test_jpg, "rb"))
+    assert isinstance(img, np.ndarray)
+    assert img.shape == (288, 360)
+
+def test_imread_bytesio():
+    bytesio = io.BytesIO(open(test_jpg, "rb").read())
+    img = imread(bytesio)
+    assert isinstance(img, np.ndarray)
+    assert img.shape == (288, 360)
+
+def test_imsave_bytesio():
+    bytesio = io.BytesIO()
+    imsave(np.zeros((10,10), dtype=np.uint8), bytesio, format="jpg")
+    print(bytesio.getvalue())
+    assert b"\xff\xd8" in bytesio.getvalue()  # Start of image
+    assert b"\xff\xd9" in bytesio.getvalue()  # end of image

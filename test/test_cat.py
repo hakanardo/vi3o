@@ -194,5 +194,5 @@ def test_cat_kwargs_forwarding(monkeypatch):
     my_mock = mock.MagicMock()
     monkeypatch.setattr(vi3o, "Video", my_mock)
     videocat = cat.VideoCat(["hello.mkv"], grey=True)
-    my_mock.assert_called()
+    assert my_mock.called
     my_mock.assert_called_with("hello.mkv", grey=True)

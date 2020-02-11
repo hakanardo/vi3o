@@ -231,6 +231,6 @@ def test_recording_forwards_kwargs(monkeypatch, mocked_metadata):
     monkeypatch.setattr(recording.cat, "VideoCat", my_mock)
 
     _ = recording.Recording(mocked_metadata, grey=True)
-    my_mock.assert_called()
+    assert my_mock.called
     _, kwargs = my_mock.call_args
     assert "grey" in kwargs
