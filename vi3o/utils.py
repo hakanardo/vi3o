@@ -42,6 +42,8 @@ def index_file(fn, extradata=None):
     key = hashlib.md5(key.encode()).hexdigest()
     path = os.path.join(cache_dir, key + '.idx')
     d = os.path.dirname(path)
-    if not os.path.exists(d):
+    try:
         os.makedirs(d)
+    except OSError:
+        pass
     return path
