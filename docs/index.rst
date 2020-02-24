@@ -58,6 +58,14 @@ Then there are a few different ways to install vi3o:
 
 Whats new
 =========
+v0.9.1
+------
+* Make the imageio backend fps default to 25 if not specified
+* Fix pillow > 6.1.1 compatibility bug with bad img
+* Repair tests for python 3-3.5
+* Repair AxisCam (imwrite fp interface)
+* Fixes race in index_file creation
+
 v0.9.0
 ------
 * Added :py:class:`vi3o.recording.Recording` for reading AXIS NAS/SD-card recordings.
