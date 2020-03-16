@@ -42,7 +42,7 @@ def imsavesc(img, filename, format=None):
 
 class Silent: pass
 
-def imread(filename, repair=False):
+def imread(filename, repair=False, convert=None):
     """
     Load an image from the file *filename*. If *repair* is True, attempts will be made to decode
     broken frames, in which case partially decoded frames might be returned. A warning is printed
@@ -54,6 +54,8 @@ def imread(filename, repair=False):
     except AttributeError:
         # Try converting filename to a string to handle e.g. patlib2 paths
         a =  PIL.Image.open(str(filename))
+    if convert is not None:
+        a.convert(convert)
     pillow_truncated_img = PIL.ImageFile.LOAD_TRUNCATED_IMAGES
     try:
         PIL.ImageFile.LOAD_TRUNCATED_IMAGES = False
