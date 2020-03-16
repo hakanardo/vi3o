@@ -46,7 +46,8 @@ def imread(filename, repair=False, convert=None):
     """
     Load an image from the file *filename*. If *repair* is True, attempts will be made to decode
     broken frames, in which case partially decoded frames might be returned. A warning is printed
-    to standard output unless *repair* is set to :class:`vi3o.image.Silent`.
+    to standard output unless *repair* is set to :class:`vi3o.image.Silent`. To convert the image
+    to a specific colorspace, set *convert* to the deciered pillow colormode.
     """
     try:
         # filename might be an open file
