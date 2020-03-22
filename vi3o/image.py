@@ -56,7 +56,7 @@ def imread(filename, repair=False, convert=None):
         # Try converting filename to a string to handle e.g. patlib2 paths
         a =  PIL.Image.open(str(filename))
     if convert is not None:
-        a.convert(convert)
+        a = a.convert(convert)
     pillow_truncated_img = PIL.ImageFile.LOAD_TRUNCATED_IMAGES
     try:
         PIL.ImageFile.LOAD_TRUNCATED_IMAGES = False

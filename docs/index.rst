@@ -58,6 +58,10 @@ Then there are a few different ways to install vi3o:
 
 Whats new
 =========
+v0.9.3
+------
+* Fixed convert options to :py:func:`vi3o.image.imread`
+
 v0.9.2
 ------
 * Added :py:class:`vi3o.utils.VideoFilter` for transforming frames on load
