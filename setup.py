@@ -8,7 +8,13 @@ import os
 with open(os.path.join(os.path.dirname(__file__), "vi3o", "version.py")) as fp:
     exec(fp.read())
 
-requirements=["cffi>=1.0.0", "numpy>=1.7.1,<1.17"]
+requirements=["cffi>=1.0.0"]
+
+if sys.version_info < (3,):
+    requirements.append("numpy>=1.7.1,<1.17")
+else:
+    requirements.append("numpy>=1.7.1")
+
 if sys.version_info <= (3, 3, 0):
     requirements.append("pathlib2")
 
