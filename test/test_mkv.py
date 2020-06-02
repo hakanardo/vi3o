@@ -14,6 +14,7 @@ mydir = os.path.dirname(__file__)
 test_mkv = os.path.join(mydir, "t.mkv")
 systime_mkv = os.path.join(mydir, "systime.mkv")
 mjpg_codec_mkv = os.path.join(mydir, "test_mjpg_codec.mkv")
+mac_mkv = os.path.join(mydir, "c.mkv")
 
 def test_iter():
     timestamps = []
@@ -128,3 +129,9 @@ def test_mjpg_codec_grey():
         systimes.append(img.systime)
         assert img.shape == (300, 480)
     assert systimes == [1539001990.82, 1539001991.82, 1539001992.82]
+
+def test_serial_number():
+    assert Mkv(mac_mkv).serial_number == b'ACCC8E19244E'
+
+def test_no_serial_number():
+    assert Mkv(test_mkv).serial_number == b''

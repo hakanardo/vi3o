@@ -61,6 +61,14 @@ class Mkv(object):
     def _sliced_systimes(self, range):
         return [self.systimes[i] for i in range]
 
+    @property
+    def serial_number(self):
+        """
+        The Axis serial number or mac address of the camera that made this recording.
+        """
+        self.myiter.next()
+        return ffi.string(self.myiter.m.mac)
+
     def __iter__(self):
         return MkvIter(self.filename, self.systime_offset, self.grey)
 
