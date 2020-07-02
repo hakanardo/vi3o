@@ -55,8 +55,6 @@ def imread(filename, repair=False, convert=None):
     except AttributeError:
         # Try converting filename to a string to handle e.g. patlib2 paths
         a =  PIL.Image.open(str(filename))
-    if convert is not None:
-        a = a.convert(convert)
     pillow_truncated_img = PIL.ImageFile.LOAD_TRUNCATED_IMAGES
     try:
         PIL.ImageFile.LOAD_TRUNCATED_IMAGES = False
@@ -70,6 +68,8 @@ def imread(filename, repair=False, convert=None):
         a.load()
     finally:
         PIL.ImageFile.LOAD_TRUNCATED_IMAGES = pillow_truncated_img
+    if convert is not None:
+        a = a.convert(convert)
     return np.array(a)
 
 
