@@ -26,6 +26,7 @@ class DebugViewer(object):
     mouse_x = mouse_y = 0
     scroll = [0, 0]
     named_viewers =  {}
+    image_array_aspect_ratio = 16/9
 
     def __init__(self, name='Video'):
         with global_pyglet_lock:
@@ -84,10 +85,12 @@ class DebugViewer(object):
             else:
                 self.image_array.append((img, intensity))
 
-    def flipp(self, pause=None):
+    def flipp(self, pause=None, aspect_ratio=None):
         with global_pyglet_lock:
             if pause is not None:
                 DebugViewer.paused = pause
+            if aspect_ratio is not None:
+                DebugViewer.image_array_aspect_ratio = aspect_ratio
             if not self.autoflipp:
                 self._inc_fcnt()
                 self._view_image_array()
@@ -96,28 +99,74 @@ class DebugViewer(object):
             self.autoflipp = False
             self.image_array = []
 
-
-    def _pad_height(self, img, h):
-        extra = h - img.shape[0]
+    def _pad_dimension(self, img, value, dimension):
+        assert dimension in (0, 1)
+        extra = value - img.shape[dimension]
         assert extra >= 0
         if extra == 0:
             return img
-        top = extra // 2
+        first = extra // 2
         shape = list(img.shape)
-        shape[0]  += extra
+        shape[dimension] += extra
         res = np.ones(shape, img.dtype) * 25
-        res[top:top+img.shape[0]] = img
+        if dimension == 0:
+            res[first:first+img.shape[dimension]] = img
+        elif dimension == 1:
+            res[:, first:first+img.shape[dimension]] = img
         return res
 
+    def _pad_height(self, img, h):
+        return self._pad_dimension(img, h, 0)
+
+    def _pad_width(self, img, w):
+        return self._pad_dimension(img, w, 1)
+
+    def _get_stacked_row_idx(self, num_images, grid_width):
+        prev = 0
+        split = grid_width
+        row_idx = []
+        while prev < num_images:
+            row_idx.append((prev, min(split, num_images)))
+            prev = split
+            split += grid_width
+        return row_idx
+
+    def _get_stacked_size(self, images, grid_width):
+        height = 0
+        width = 0
+        for start, end in self._get_stacked_row_idx(len(images), grid_width):
+            row_images = images[start:end]
+            height += max(i.shape[0] for i in row_images)
+            width = max(width, sum(i.shape[1] for i in row_images))
+        return height, width
+
     def _stack(self, image_array):
+        # Make sure all images has the same number of channels (1/gray or 3/rgb)
         if max(len(img.shape) for img in image_array) == 3:
             images = [img if len(img.shape) == 3 else np.stack([img, img, img], 2)
                       for img in image_array]
         else:
             images = image_array
-        h = max(img.shape[0] for img in image_array)
-        images = [self._pad_height(img, h) for img in images]
-        return np.hstack(images)
+        # Stack the images so that we get as close to the requested aspect ratio as possible
+        # This logic could be made much more intelligent to decide split index when images
+        # are of different size, we should however not change the order of images. This
+        # implementation tends to galleries wider than requested based on the assumption
+        # that most screens are wider rather than higher.
+        grid_width = 1
+        while True:
+            h, w = self._get_stacked_size(images, grid_width)
+            if grid_width >= len(images):
+                grid_width = len(images)
+                break
+            if w / h >= self.image_array_aspect_ratio:
+                break
+            grid_width += 1
+
+        row_images = []
+        for start, end in self._get_stacked_row_idx(len(images), grid_width):
+            row_height = max(img.shape[0] for img in images[start:end])
+            row_images.append(self._pad_width(np.hstack([self._pad_height(img, row_height) for img in images[start:end]]), w))
+        return np.vstack(row_images)
 
     def _view_image_array(self):
 
