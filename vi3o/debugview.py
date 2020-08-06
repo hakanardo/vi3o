@@ -222,11 +222,15 @@ class DebugViewer(object):
             self.xcoordinate_modulus = int(char)
 
 
-    def on_mouse_motion(self, x, y, dx=None, dy=None):
+    def window_to_image_coord(self, x, y):
         x = int((x - self.offset[0] - self.scroll[0]) / self.scale)
         if self.image is not None:
             x = x % (self.image.width / self.xcoordinate_modulus)
         y = self.image.height - int((y - self.offset[1] - self.scroll[1]) / self.scale) - 1
+        return x, y
+
+    def on_mouse_motion(self, x, y, dx=None, dy=None):
+        x, y = self.window_to_image_coord(x, y)
         DebugViewer.mouse_x, DebugViewer.mouse_y = x, y
 
     def on_resize(self, winw, winh):
