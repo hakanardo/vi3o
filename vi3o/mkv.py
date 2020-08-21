@@ -23,12 +23,16 @@ class Mkv(object):
         need_index = True
         idx = index_file(self.filename)
         if os.path.exists(idx):
-            index = json.load(open(idx))
-            if index['version'] == INDEX_VERSION:
-                self.frame = index['frame']
-                self.systime_offset = index['systime_offset']
-                self.mjpg_mode = index['mjpg_mode']
-                need_index = False
+            try:
+                index = json.load(open(idx))
+            except Exception:
+                pass
+            else:
+                if index['version'] == INDEX_VERSION:
+                    self.frame = index['frame']
+                    self.systime_offset = index['systime_offset']
+                    self.mjpg_mode = index['mjpg_mode']
+                    need_index = False
 
         if need_index or reindex:
             self.frame = []
