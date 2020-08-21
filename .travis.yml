@@ -5,6 +5,8 @@ python:
 - '3.4'
 os:
 - 'linux'
+env:
+- HEADLESS=True
 addons:
   apt:
     packages:

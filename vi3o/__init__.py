@@ -51,15 +51,17 @@ def viewsc(img, name='Default', pause=None):
     """
     view(img, name, True, pause)
 
-def flipp(name='Default', pause=None):
+def flipp(name='Default', pause=None, aspect_ratio=None):
     """
     After :func:`vi3o.flipp` is called, subsequent calls to :func:`vi3o.view` will no
     longer display the images directly. Instead they will be collected and concatinated.
     On the next call to :func:`vi3o.flipp` all the collected images will be displayed.
     If *pause* is set to True/False, the viewer is paused/unpaused after the
     image is displayed.
+    If aspect_ratio is set the images will be stacked in such a way that the total
+    aspect ratio is close to aspect_ratio.
     """
-    _get_debug_viewer(name).flipp(pause)
+    _get_debug_viewer(name).flipp(pause, aspect_ratio)
 
 from vi3o.sync import SyncedVideos
 from vi3o.cat import VideoCat, VideoGlob
