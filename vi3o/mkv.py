@@ -50,7 +50,7 @@ class Mkv(object):
             self.mjpg_mode = (ffi.string(m.codec_id) == b'V_MS/VFW/FOURCC')
             lib.mkv_close(m)
 
-            tmp = idx + f'.tmp.{os.getpid()}'
+            tmp = idx + '.tmp.%d' % os.getpid()
             with open(tmp, 'w') as fd:
                 json.dump({'frame': self.frame,
                            'systime_offset': self.systime_offset,
