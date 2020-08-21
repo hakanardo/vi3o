@@ -46,11 +46,17 @@ class Mkv(object):
             self.mjpg_mode = (ffi.string(m.codec_id) == b'V_MS/VFW/FOURCC')
             lib.mkv_close(m)
 
-            with open(idx, 'w') as fd:
+            tmp = idx + f'.tmp.{os.getpid()}'
+            with open(tmp, 'w') as fd:
                 json.dump({'frame': self.frame,
                            'systime_offset': self.systime_offset,
                            'mjpg_mode': self.mjpg_mode,
                            'version': INDEX_VERSION}, fd)
+            try:
+                os.link(tmp, idx)
+            except FileExistsError:
+                pass
+            os.unlink(tmp)
 
     @property
     def systimes(self):
