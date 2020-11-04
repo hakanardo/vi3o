@@ -58,6 +58,14 @@ Then there are a few different ways to install vi3o:
 
 Whats new
 =========
+v0.10.0
+-------
+* Allow the convert option of :py:func:`vi3o.image.imread` to work with truncated images
+* Expose Axis camera MAC in :class:`vi3o.mkv.Mkv` video
+* Safer handling of cache files when multiple processes simultaniously opens the same :class:`vi3o.mkv.Mkv` video
+* Add :py:func:`vi3o.debugview.DebugView.window_to_image_coord` on :class:`vi3o.debugview.DebugView` which can be usefull when 
+  overriding :py:func:`vi3o.debugview.DebugView.on_mouse_motion` in subclasses.
+
 v0.9.3
 ------
 * Fixed convert options to :py:func:`vi3o.image.imread`
