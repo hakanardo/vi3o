@@ -33,7 +33,7 @@ sys.path = [os.path.dirname(os.path.dirname(__file__))] + sys.path
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.coverage',
-    'sphinx.ext.pngmath',
+    'sphinx.ext.imgmath',
     'sphinx.ext.viewcode',
 ]
 
@@ -58,7 +58,8 @@ copyright = u'2015, Hakan Ardo'
 # built documents.
 #
 # The short X.Y version.
-from vi3o import __version_info__
+with open(os.path.join(os.path.dirname(__file__), "..", "vi3o", "version.py")) as fp:
+    exec(fp.read())
 a, b, c = __version_info__
 version = '%d.%d' % (a, b)
 # The full version, including alpha/beta/rc tags.
