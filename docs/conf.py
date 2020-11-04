@@ -58,8 +58,7 @@ copyright = u'2015, Hakan Ardo'
 # built documents.
 #
 # The short X.Y version.
-with open(os.path.join(os.path.dirname(__file__), "..", "vi3o", "version.py")) as fp:
-    exec(fp.read())
+from vi3o import __version_info__
 a, b, c = __version_info__
 version = '%d.%d' % (a, b)
 # The full version, including alpha/beta/rc tags.

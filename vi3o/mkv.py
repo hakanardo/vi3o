@@ -1,9 +1,14 @@
 import json
 import os
-from vi3o._mkv import ffi, lib
 from vi3o.utils import SlicedView, index_file, Frame
-from vi3o._mjpg import lib as mjpg_lib
-from vi3o._mjpg import ffi as mjpg_ffi
+try:
+    from vi3o._mkv import ffi, lib
+    from vi3o._mjpg import lib as mjpg_lib
+    from vi3o._mjpg import ffi as mjpg_ffi
+except ImportError as e:
+    import warnings
+    warnings.warn("Failed to import. Try to recompile/reinstall vi3o. " + str(e))
+
 
 from threading import Lock
 decode_open_lock = Lock()

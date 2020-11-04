@@ -6,7 +6,11 @@
 import json
 import os, sys
 from vi3o.utils import SlicedView, index_file, Frame
-from vi3o._mjpg import ffi, lib
+try:
+    from vi3o._mjpg import ffi, lib
+except ImportError as e:
+    import warnings
+    warnings.warn("Failed to import. Try to recompile/reinstall vi3o. " + str(e))
 
 class Mjpg(object):
     """
