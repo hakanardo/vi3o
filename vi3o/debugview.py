@@ -195,7 +195,7 @@ class DebugViewer(object):
             resize = img.shape != self.prev_image_shape
         self.prev_image_shape = img.shape
 
-        if len(img.shape) == 3:
+        if len(img.shape) == 3 and img.shape[2] == 3:
             f = 'RGB'
             pitch = -img.shape[1] * 3
         else:
