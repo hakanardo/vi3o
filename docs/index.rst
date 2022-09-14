@@ -18,12 +18,6 @@ Work in progress...
 Installation
 ============
 
-First, install some dependencies:
-
-    .. code-block:: bash
-
-        sudo apt-get install libjpeg62-turbo-dev libavcodec-dev libswscale-dev libffi-dev
-
 Then there are a few different ways to install vi3o:
 
 * Use pip to install vi3o with the minimal set of dependencies:
@@ -43,16 +37,13 @@ Then there are a few different ways to install vi3o:
         * pillow < 7.0
         * pyglet < 1.5
 
-* or get the source code via the `Python Package Index`__.
-
-.. __: http://pypi.python.org/pypi/vi3o
-
-* or get it from `Github`_:
+* or build it from `Github`_:
 
     .. code-block:: bash
 
       git clone https://github.com/hakanardo/vi3o.git
       cd vi3o
+      sudo apt-get install libjpeg62-turbo-dev libavcodec-dev libswscale-dev libffi-dev
       python setup.py install
 
 .. _`Github`: https://github.com/hakanardo/vi3o
@@ -60,6 +51,12 @@ Then there are a few different ways to install vi3o:
 
 Whats new
 =========
+v0.11.1
+-------
+* Fix length property of mp4 video
+* Draw 1 channel images as gray in :class:`vi3o.debugview.DebugView`
+* Use manylinux to build wheels with greater compatibility
+
 v0.10.0
 -------
 * Allow the convert option of :py:func:`vi3o.image.imread` to work with truncated images
