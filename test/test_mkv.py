@@ -15,6 +15,7 @@ test_mkv = os.path.join(mydir, "t.mkv")
 systime_mkv = os.path.join(mydir, "systime.mkv")
 mjpg_codec_mkv = os.path.join(mydir, "test_mjpg_codec.mkv")
 mac_mkv = os.path.join(mydir, "c.mkv")
+codec_bug_mkv = os.path.join(mydir, "20220914_093512_A4D4.mkv")
 
 def test_iter():
     timestamps = []
@@ -135,3 +136,12 @@ def test_serial_number():
 
 def test_no_serial_number():
     assert Mkv(test_mkv).serial_number == b''
+
+def test_decode_bug():
+    img1 = Mkv(codec_bug_mkv)[1]
+    video = Mkv(codec_bug_mkv)
+    video[0]
+    video[0]
+    img2 = video[1]
+    assert (img1-img2).sum() == 0
+

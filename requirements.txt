@@ -2,5 +2,5 @@ cffi>=1.2.1
 Pillow>=3.4.2
 numpy
 pytest>=4.6,!=4.6.0
-
-
+imageio>=2.4.1
+imageio-ffmpeg
