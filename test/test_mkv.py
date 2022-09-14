@@ -137,7 +137,7 @@ def test_serial_number():
 def test_no_serial_number():
     assert Mkv(test_mkv).serial_number == b''
 
-def test_decode():
+def test_decode_bug():
     img1 = Mkv(codec_bug_mkv)[1]
     video = Mkv(codec_bug_mkv)
     video[0]
