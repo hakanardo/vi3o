@@ -12,7 +12,7 @@ from vi3o import view
 NEAREST = PIL.Image.NEAREST
 BILINEAR = PIL.Image.BILINEAR
 BICUBIC = PIL.Image.BICUBIC
-ANTIALIAS = PIL.Image.ANTIALIAS
+ANTIALIAS = PIL.Image.LANCZOS
 
 
 def imsave(img, filename, format=None):
@@ -21,7 +21,7 @@ def imsave(img, filename, format=None):
     in *format*, the filename extension will be used as *format*.
     """
     if format is None:
-        format = filename.split('.')[-1]
+        format = str(filename).split('.')[-1]
     if format == 'jpg':
         format = 'jpeg'
     if img.dtype != 'B':

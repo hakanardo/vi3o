@@ -43,9 +43,11 @@ def test_imsave_and_imread_pathlib():
     with TempDir() as d:
         img = np.zeros((320, 240, 3), 'B')
         img[10, 20] = 255
-        path = pathlib.Path("t1.jpg")
+        path = pathlib.Path(f"{d}/t1.jpg")
         imsave(img, path, "jpg")
-        imread(path)
+        imread(path).shape == (320, 240, 3)
+        imsave(img, path)
+        imread(path).shape == (320, 240, 3)
 
 
 def test_imgdir():
