@@ -49,7 +49,7 @@ jobs:
       with:
         python-versions: ${{ matrix.pep-425-tag }}
         build-requirements: 'cffi numpy'
-        system-packages: 'libjpeg62-turbo-dev libavcodec-dev libswscale-dev libffi-dev'
+        system-packages: 'libjpeg62-dev libavcodec-dev libswscale-dev libffi-dev'
     - name: Install wheel
       run: pip install vi3o --no-index -f dist/
     - name: Install test dependencies
