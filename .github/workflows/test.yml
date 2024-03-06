@@ -52,12 +52,11 @@ jobs:
     - name: Install test dependencies
       run: |
         sudo apt-get --yes install ffmpeg
-        pip install pytest
+        pip install pytest py
     - name: Test wheel
       run: |
         cp -r test ~
         cd ~/test
-        ls -l
         HEADLESS=1 py.test
     - name: Publish wheels to PyPI
       if: github.event_name == 'release' && matrix.os == 'ubuntu-latest'
