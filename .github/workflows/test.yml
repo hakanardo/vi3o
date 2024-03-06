@@ -17,17 +17,17 @@ jobs:
         python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12']
         include:
           - python-version: '3.7'
-            pep-425-tag: 'cp37-cp37m'
+            tag: 'cp37m-manylinux_x86_64'
           - python-version: '3.8'
-            pep-425-tag: 'cp38-cp38'
+            tag: 'cp38-manylinux_x86_64'
           - python-version: '3.9'
-            pep-425-tag: 'cp39-cp39'
+            tag: 'cp39-manylinux_x86_64'
           - python-version: '3.10'
-            pep-425-tag: 'cp310-cp310'
+            tag: 'cpp310-manylinux_x86_64'
           - python-version: '3.11'
-            pep-425-tag: 'cp311-cp311'
-          - python-version: '3.12'
-            pep-425-tag: 'cp312-cp312'
+            tag: 'cpp311-manylinux_x86_64'
+          # - python-version: '3.12'
+          #   tag: 'cpp312-manylinux_x86_64'
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
@@ -40,16 +40,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 twine
         pip install -r requirements.txt
+        pip install cibuildwheel==2.16.5
     # - name: Lint with flake8 for syntax errors
     #   run: |
     #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
     #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Build manylinux Python wheels
-      uses: RalfG/python-wheels-manylinux-build@v0.7.1-manylinux2014_x86_64
-      with:
-        python-versions: ${{ matrix.pep-425-tag }}
-        build-requirements: 'cffi numpy'
-        system-packages: 'libjpeg-turbo-dev libavcodec-dev libswscale-dev libffi-dev'
+    - name: Build manylinux Python wheels using cibuildwheel
+      run: cibuildwheel --platform linux
+      env:
+        CIBW_BEFORE_ALL: 'sed -i -e "s/deb.debian.org/archive.debian.org/" /etc/apt/sources.list; apt-get update; apt-get --yes install libjpeg62-turbo-dev libavcodec-dev libswscale-dev libffi-dev'
+        CIBW_MANYLINUX_X86_64_IMAGE: 'manylinux_2_24'
+        CIBW_BUILD: ${{ matrix.tag }}
     - name: Install wheel
       run: pip install vi3o --no-index -f dist/
     - name: Install test dependencies
